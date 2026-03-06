@@ -6,7 +6,7 @@ export const config = {
 
   // AI
   textModel: 'claude-sonnet-4-6' as string,
-  imageModel: 'google/gemini-3-pro-image' as const,
+  imageModel: 'gemini-2.5-flash-image' as string,
 
   // Twitter
   twitter: {

@@ -1,6 +1,6 @@
 import { generateText, generateObject } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
-import { gateway } from '@ai-sdk/gateway'
+import { google } from '@ai-sdk/google'
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -96,7 +96,7 @@ export class Generator {
 
         const messages = await this.buildMessages(panelPrompt, refImages)
         const { files } = await generateText({
-          model: gateway(config.imageModel),
+          model: google(config.imageModel),
           messages,
         })
 
@@ -205,7 +205,7 @@ export class Generator {
         const refImages = i === 0 ? await this.findReferenceImages(concept) : (concept.referenceImageUrls ?? [])
         const messages = await this.buildMessages(prompt, refImages)
         const { files } = await generateText({
-          model: gateway(config.imageModel),
+          model: google(config.imageModel),
           messages,
         })
 

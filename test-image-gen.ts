@@ -5,19 +5,19 @@
  * Tests different style approaches and saves results for comparison.
  *
  * Usage:
- *   AI_GATEWAY_API_KEY=<key> npx tsx test-image-gen.ts
- *   AI_GATEWAY_API_KEY=<key> npx tsx test-image-gen.ts --test single-panel
- *   AI_GATEWAY_API_KEY=<key> npx tsx test-image-gen.ts --test strip-panel
- *   AI_GATEWAY_API_KEY=<key> npx tsx test-image-gen.ts --test style-compare
+ *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx test-image-gen.ts
+ *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx test-image-gen.ts --test single-panel
+ *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx test-image-gen.ts --test strip-panel
+ *   GOOGLE_GENERATIVE_AI_API_KEY=<key> npx tsx test-image-gen.ts --test style-compare
  */
 
 import { generateText } from 'ai'
-import { gateway } from '@ai-sdk/gateway'
+import { google } from '@ai-sdk/google'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 
 const OUTPUT_DIR = '.data-test/image-tests'
-const MODEL = 'google/gemini-3-pro-image'
+const MODEL = 'gemini-2.5-flash-image'
 
 // ───── STYLE TEMPLATES TO TEST ─────
 
@@ -150,7 +150,7 @@ async function generateImage(
 
   try {
     const { files } = await generateText({
-      model: gateway(MODEL),
+      model: google(MODEL),
       messages: [{
         role: 'user',
         content: [{ type: 'text', text: prompt }],
@@ -284,18 +284,14 @@ most energy. Square composition (1:1).`,
 // ───── MAIN ─────
 
 async function main() {
-  if (!process.env.AI_GATEWAY_API_KEY) {
-    console.log('❌ AI_GATEWAY_API_KEY not set.')
+  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    console.log('❌ GOOGLE_GENERATIVE_AI_API_KEY not set.')
     console.log('')
     console.log('To get started:')
     console.log('  1. Go to https://aistudio.google.com/apikey')
     console.log('  2. Create an API key')
-    console.log('  3. Run: AI_GATEWAY_API_KEY=<your-key> npx tsx test-image-gen.ts')
-    console.log('')
-    console.log('Note: The AI SDK gateway uses AI_GATEWAY_API_KEY.')
-    console.log('If you want to use Google directly instead, you\'d need to')
-    console.log('swap @ai-sdk/gateway for @ai-sdk/google in the code and')
-    console.log('use GOOGLE_GENERATIVE_AI_API_KEY instead.')
+    console.log('  3. Run: GOOGLE_GENERATIVE_AI_API_KEY=<your-key> npx tsx test-image-gen.ts')
+    console.log('  Or add it to your .env file.')
     process.exit(1)
   }
 
