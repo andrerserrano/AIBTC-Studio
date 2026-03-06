@@ -165,10 +165,7 @@ export async function migratePostsToCdn(postsStore: JsonStore<Post[]>): Promise<
       if (cdnUrl) { post.imageUrl = cdnUrl; changed = true }
     }
 
-    if (post.videoUrl && !post.videoUrl.startsWith('https://')) {
-      const cdnUrl = await migrateUrl(post.videoUrl, 'videos')
-      if (cdnUrl) { post.videoUrl = cdnUrl; changed = true }
-    }
+    // Video migration removed — video generation stripped in AIBTC fork
 
     if (changed) migrated++
   }

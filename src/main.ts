@@ -26,7 +26,7 @@ async function main() {
   // --- Restore from Postgres backup if available ---
   let backup: BackupStore | null = null
   if (config.postgres.enabled) {
-    backup = new BackupStore(config.postgres.url)
+    backup = new BackupStore(config.postgres.url, process.env.BACKUP_SECRET ?? 'aibtc-studio-default-key')
     await backup.init()
     const restored = await backup.restoreAll(config.dataDir)
     if (restored > 0) {

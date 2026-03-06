@@ -12,9 +12,10 @@ export interface AIBTCMetadata {
 export interface Signal {
   id: string
   source: 'aibtc'
-  type: 'headline'
+  type: 'headline' | 'post'
   content: string
   url: string
+  author: string
   mediaUrls?: string[]
   metrics?: {
     score?: number
@@ -42,6 +43,7 @@ export interface Topic {
   safety: { passed: boolean; reason?: string }
   status: 'candidate' | 'shortlisted' | 'selected' | 'posted' | 'rejected'
   evaluatedAt: number
+  quoteCandidates?: string[]
 }
 
 export interface CartoonConcept {
@@ -85,6 +87,7 @@ export interface Post {
   cartoonId?: string
   text: string
   imageUrl?: string
+  quotedTweetId?: string
   type: 'flagship' | 'quickhit' | 'engagement'
   postedAt: number
   engagement: {

@@ -95,7 +95,6 @@ export class EngagementLoop {
     private events: EventBus,
     private twitter: TwitterClient,
     private posts: JsonStore<Post[]>,
-    private signer?: ContentSigner,
   ) {
     this.followedUsers = new JsonStore(join(config.dataDir, 'followed-users.json'))
     this.engagementState = new JsonStore(join(config.dataDir, 'engagement-state.json'))
@@ -230,8 +229,6 @@ export class EngagementLoop {
       tweetId,
       text,
       type: 'engagement',
-      signature: await this.signer?.sign(text),
-      signerAddress: this.signer?.address,
       postedAt: Date.now(),
       engagement: { likes: 0, retweets: 0, replies: 0, views: 0, lastChecked: 0 },
     }

@@ -195,7 +195,7 @@ export class AIBTCScanner {
     })
   }
 
-  private inferSignalType(beatSlug: string): 'headline' | 'tweet' | 'post' {
+  private inferSignalType(beatSlug: string): 'headline' | 'post' {
     // Map beat types to signal types for pipeline compatibility
     const headlineBeats = ['governance', 'defi', 'ordinals-culture', 'dev-tools']
     return headlineBeats.includes(beatSlug) ? 'headline' : 'post'
