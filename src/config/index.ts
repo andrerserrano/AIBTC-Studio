@@ -21,6 +21,13 @@ export const config = {
     username: process.env.TWITTER_USERNAME ?? '',
   },
 
+  // AIBTC.news API
+  aibtcNews: {
+    baseUrl: process.env.AIBTC_NEWS_URL ?? 'https://aibtc.news',
+    beats: (process.env.AIBTC_BEATS ?? 'dev-tools,ordinals-culture,governance,defi').split(','),
+    pollIntervalMs: testMode ? 30_000 : 5 * 60_000,  // 30s vs 5min
+  },
+
   // Agent loop
   tickIntervalMs: testMode ? 10_000 : 120_000,
   flagshipIntervalMs: testMode ? 30_000 : 6 * 3600_000,     // 30s vs 6h
@@ -35,7 +42,6 @@ export const config = {
 
   // Scanning
   scan: {
-    twitterTimelineTtlMs: testMode ? 30_000 : 2 * 60_000,
     newsTtlMs: testMode ? 60_000 : 15 * 60_000,
   },
 
@@ -50,46 +56,6 @@ export const config = {
     imagePromptTtlMs: testMode ? 60_000 : 24 * 3600_000,
     llmResponseTtlMs: testMode ? 60_000 : 3600_000,
     maxEntries: 1000,
-  },
-
-  // Auction
-  auction: {
-    cycleDurationSeconds: testMode ? 300 : 6 * 3600,           // 5min vs 6h
-    minimumBidUsdc: 1_000_000,
-    pollIntervalMs: testMode ? 15_000 : 60_000,
-  },
-
-  // Chains
-  base: {
-    enabled: !!process.env.BASE_RPC_URL,
-    rpcUrl: process.env.BASE_RPC_URL ?? '',
-    auctionAddress: process.env.BASE_AUCTION_ADDRESS ?? '',
-    usdcAddress: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', // Base mainnet USDC
-  },
-
-  solana: {
-    enabled: !!process.env.SOLANA_RPC_URL,
-    rpcUrl: process.env.SOLANA_RPC_URL ?? '',
-    programId: process.env.SOLANA_AUCTION_PROGRAM_ID ?? '',
-    mnemonic: process.env.MNEMONIC ?? '',
-  },
-
-  // Narrator (voice)
-  narrator: {
-    enabled: !!process.env.ELEVENLABS_API_KEY,
-    apiKey: process.env.ELEVENLABS_API_KEY ?? '',
-    voiceId: process.env.ELEVENLABS_VOICE_ID ?? '',
-  },
-
-  // Video pipeline (Replicate Veo 3.1)
-  video: {
-    enabled: !!process.env.REPLICATE_API_TOKEN,
-    replicateToken: process.env.REPLICATE_API_TOKEN ?? '',
-    model: 'google/veo-3.1' as const,
-    duration: 8,
-    speedFactor: 0.667,      // 8s / 0.667 ≈ 12s final video
-    resolution: '1080p' as const,
-    aspectRatio: '16:9' as const,
   },
 
   // Worldview reflection

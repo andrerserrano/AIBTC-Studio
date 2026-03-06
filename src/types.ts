@@ -1,21 +1,3 @@
-export interface GrokMetadata {
-  storyId: string
-  headline: string
-  summary: string
-  hook?: string
-  category?: string
-  topics?: string[]
-  entities?: {
-    events?: string[]
-    organizations?: string[]
-    people?: string[]
-    places?: string[]
-    products?: string[]
-  }
-  keywords?: string[]
-  postIds: string[]
-}
-
 export interface AIBTCMetadata {
   signalId: string
   beat: string
@@ -29,23 +11,16 @@ export interface AIBTCMetadata {
 
 export interface Signal {
   id: string
-  source: 'twitter' | 'reddit' | 'hn' | 'google-news' | 'aibtc'
-  type: 'trend' | 'tweet' | 'post' | 'headline'
+  source: 'aibtc'
+  type: 'headline'
   content: string
   url: string
-  tweetId?: string
-  author?: string
   mediaUrls?: string[]
   metrics?: {
-    likes?: number
-    retweets?: number
-    comments?: number
     score?: number
-    trendRank?: number
   }
   ingestedAt: number
   expiresAt: number
-  grok?: GrokMetadata
   aibtc?: AIBTCMetadata
 }
 
@@ -67,7 +42,6 @@ export interface Topic {
   safety: { passed: boolean; reason?: string }
   status: 'candidate' | 'shortlisted' | 'selected' | 'posted' | 'rejected'
   evaluatedAt: number
-  quoteCandidates?: string[]
 }
 
 export interface CartoonConcept {
@@ -95,7 +69,7 @@ export interface Cartoon {
   id: string
   conceptId: string
   topicId: string
-  type: 'flagship' | 'quickhit' | 'paid'
+  type: 'flagship' | 'quickhit'
   concept: CartoonConcept
   imagePrompt: string
   variants: string[]
@@ -111,11 +85,7 @@ export interface Post {
   cartoonId?: string
   text: string
   imageUrl?: string
-  videoUrl?: string
-  quotedTweetId?: string
-  type: 'flagship' | 'quickhit' | 'paid' | 'engagement'
-  signature?: string
-  signerAddress?: string
+  type: 'flagship' | 'quickhit' | 'engagement'
   postedAt: number
   engagement: {
     likes: number
@@ -125,4 +95,3 @@ export interface Post {
     lastChecked: number
   }
 }
-

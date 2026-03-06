@@ -8,7 +8,6 @@ export type AgentState =
   | 'composing'
   | 'posting'
   | 'engaging'
-  | 'auctioning'
 
 export type ConsoleEvent =
   | { type: 'monologue'; text: string; state: AgentState; ts: number; tweetId?: string }
@@ -19,8 +18,6 @@ export type ConsoleEvent =
   | { type: 'critique'; critique: string; selected: number; ts: number }
   | { type: 'post'; tweetId: string; text: string; imageUrl?: string; ts: number }
   | { type: 'engage'; replyTo: string; text: string; ts: number }
-  | { type: 'auction'; action: string; details: Record<string, unknown>; ts: number }
-  | { type: 'voice'; url: string; text: string; ts: number }
   | { type: 'state_change'; from: AgentState; to: AgentState; ts: number }
   | { type: 'metric'; name: string; value: number; ts: number }
 
@@ -29,9 +26,5 @@ export interface LocalPost {
   tweetId?: string
   text: string
   imagePath: string | null
-  videoPath: string | null
-  quotedTweetId?: string
-  signature?: string
-  signerAddress?: string
   createdAt: number
 }
