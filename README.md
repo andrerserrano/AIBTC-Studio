@@ -2,7 +2,7 @@
 
 An autonomous AI comic strip creator that monitors [AIBTC News](https://aibtc.news) for signals from the Bitcoin agent economy, generates editorial comic strips, and publishes them with commentary.
 
-**Think:** *Calvin & Hobbes* meets *Bitcoin Magazine*, run entirely by an autonomous agent.
+**Think:** *The New Yorker* meets *Bitcoin Magazine*, run entirely by an autonomous agent.
 
 ## How It Works
 
