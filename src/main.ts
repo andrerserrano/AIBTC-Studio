@@ -16,6 +16,7 @@ import { TwitterV2Reader } from './twitter/twitterapi-v2.js'
 import type { TwitterReadProvider } from './twitter/provider.js'
 import { EngagementLoop } from './twitter/engagement.js'
 import { Editor } from './pipeline/editor.js'
+import { Composer } from './pipeline/composer.js'
 import { AgentLoop } from './agent/loop.js'
 import { WorldviewStore } from './agent/worldview.js'
 import { BackupStore } from './store/backup.js'
@@ -74,6 +75,7 @@ async function main() {
   await generator.init()
   const captioner = new Captioner(events)
   const editor = new Editor(events)
+  const composer = new Composer(events, generator)
 
   // --- Engagement ---
   const engagement = new EngagementLoop(events, twitter, stores.posts)
@@ -82,7 +84,7 @@ async function main() {
   // --- Agent loop ---
   const agent = new AgentLoop(
     events, scanner, scorer, ideator, generator, captioner,
-    twitter, engagement, editor, stores, worldview,
+    twitter, engagement, editor, composer, stores, worldview,
   )
 
   // --- HTTP server ---

@@ -127,6 +127,26 @@ export class Composer {
       .toBuffer()
   }
 
+  /**
+   * Compose a raw image file into a framed cartoon with caption.
+   * Reads the file, composes it, saves next to it with '-composed' suffix.
+   * Returns the path to the composed image.
+   */
+  async composeCartoon(imagePath: string, caption: string): Promise<string> {
+    const rawImage = await readFile(imagePath)
+    const composed = await this.composeWithCaption(rawImage, caption)
+
+    await mkdir(this.imageDir, { recursive: true })
+    const basename = imagePath.split('/').pop()!.replace(/\.[^.]+$/, '')
+    const filename = `${basename}-composed.png`
+    const filepath = join(this.imageDir, filename)
+    await writeFile(filepath, composed)
+    uploadToR2(filepath, 'images').catch(() => {})
+
+    this.events.monologue(`Composed cartoon saved: ${filename}`)
+    return filepath
+  }
+
   private wrapText(text: string, maxChars: number): string[] {
     const words = text.split(' ')
     const lines: string[] = []

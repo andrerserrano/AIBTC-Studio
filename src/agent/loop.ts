@@ -9,6 +9,7 @@ import { Captioner } from '../pipeline/captioner.js'
 import { TwitterClient } from '../twitter/client.js'
 import { EngagementLoop } from '../twitter/engagement.js'
 import { Editor } from '../pipeline/editor.js'
+import { Composer } from '../pipeline/composer.js'
 import { JsonStore } from '../store/json-store.js'
 import { toCdnUrl } from '../cdn/r2.js'
 import { config } from '../config/index.js'
@@ -62,6 +63,7 @@ export class AgentLoop {
     private twitter: TwitterClient,
     private engagement: EngagementLoop,
     private editor: Editor,
+    private composer: Composer,
     private stores: AgentStores,
     private worldview?: WorldviewStore,
   ) {
@@ -270,6 +272,9 @@ export class AgentLoop {
       return
     }
 
+    // Compose the final framed cartoon (image + orange divider + caption)
+    const composedPath = await this.composer.composeCartoon(variants[0], caption)
+
     const cartoon: Cartoon = {
       id: randomUUID(),
       conceptId: best.id,
@@ -284,7 +289,7 @@ export class AgentLoop {
       createdAt: Date.now(),
     }
 
-    const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: variants[0] })
+    const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: composedPath })
 
     const post: Post = {
       id: randomUUID(),
@@ -360,6 +365,9 @@ export class AgentLoop {
 
     caption = review.caption
 
+    // Compose the final framed cartoon (image + orange divider + caption)
+    const composedPath = await this.composer.composeCartoon(variants[0], caption)
+
     const cartoon: Cartoon = {
       id: randomUUID(),
       conceptId: concept.id,
@@ -377,7 +385,7 @@ export class AgentLoop {
       createdAt: Date.now(),
     }
 
-    const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: variants[0] })
+    const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: composedPath })
 
     const post: Post = {
       id: randomUUID(),
