@@ -15,7 +15,7 @@ import { STYLE_TEMPLATE } from '../prompts/style.js'
 import type { TwitterReadProvider } from '../twitter/provider.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const SIGNATURE_PATH = join(__dirname, '..', 'assets', 'sovra_signature_no_bg.png')
+const SIGNATURE_PATH = join(__dirname, '..', 'assets', 'aibtc_studio_signature.png')
 
 const subjectExtractionSchema = z.object({
   subjects: z.array(z.object({

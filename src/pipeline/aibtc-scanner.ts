@@ -29,7 +29,7 @@ interface AIBTCSignalsResponse {
  * AIBTCScanner — Ingests intelligence signals from aibtc.news
  * 
  * Replaces Twitter/Grok scanning with Bitcoin agent network signals.
- * Converts AIBTC signals into Sovra's Signal format for the pipeline.
+ * Converts AIBTC signals into the pipeline's Signal format.
  */
 export class AIBTCScanner {
   private buffer: Map<string, Signal> = new Map()

@@ -13,7 +13,6 @@ export type AgentState =
   | 'composing'
   | 'posting'
   | 'engaging'
-  | 'auctioning'
 
 export type ConsoleEvent =
   | { type: 'monologue'; text: string; state: AgentState; ts: number; tweetId?: string }
@@ -24,8 +23,6 @@ export type ConsoleEvent =
   | { type: 'critique'; critique: string; selected: number; ts: number }
   | { type: 'post'; tweetId: string; text: string; imageUrl?: string; ts: number }
   | { type: 'engage'; replyTo: string; text: string; ts: number }
-  | { type: 'auction'; action: string; details: Record<string, unknown>; ts: number }
-  | { type: 'voice'; url: string; text: string; ts: number }
   | { type: 'state_change'; from: AgentState; to: AgentState; ts: number }
   | { type: 'metric'; name: string; value: number; ts: number }
 
@@ -101,12 +98,6 @@ export class EventBus {
         break
       case 'engage':
         console.log(`[${time}] ${stage} 💬 Replied: "${event.text}"`)
-        break
-      case 'auction':
-        console.log(`[${time}] ${stage} 🔨 Auction: ${event.action}`)
-        break
-      case 'voice':
-        console.log(`[${time}] ${stage} 🔊 Voice: "${event.text.slice(0, 60)}..."`)
         break
       case 'state_change':
         console.log(`[${time}] ⚡ ${event.from} → ${event.to}`)

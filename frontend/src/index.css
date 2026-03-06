@@ -260,31 +260,31 @@ body::before {
 }
 
 /* Playful letter scatter on hover */
-.sovra-title {
+.studio-title {
   display: inline-flex;
   cursor: pointer;
 }
-.sovra-title .sovra-letter {
+.studio-title .studio-letter {
   display: inline-block;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
 }
-.sovra-title:hover .sovra-letter:nth-child(1) {
+.studio-title:hover .studio-letter:nth-child(1) {
   transform: translate(-3px, -6px) rotate(-8deg);
   color: var(--color-vermillion);
 }
-.sovra-title:hover .sovra-letter:nth-child(2) {
+.studio-title:hover .studio-letter:nth-child(2) {
   transform: translate(2px, 5px) rotate(5deg);
   color: var(--color-ochre);
 }
-.sovra-title:hover .sovra-letter:nth-child(3) {
+.studio-title:hover .studio-letter:nth-child(3) {
   transform: translate(-1px, -4px) rotate(-4deg);
   color: var(--color-cobalt);
 }
-.sovra-title:hover .sovra-letter:nth-child(4) {
+.studio-title:hover .studio-letter:nth-child(4) {
   transform: translate(3px, 3px) rotate(7deg);
   color: var(--color-forest);
 }
-.sovra-title:hover .sovra-letter:nth-child(5) {
+.studio-title:hover .studio-letter:nth-child(5) {
   transform: translate(-2px, -5px) rotate(-6deg);
   color: var(--color-violet);
 }

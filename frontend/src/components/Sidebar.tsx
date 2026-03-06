@@ -17,26 +17,26 @@ interface WorldviewData {
 }
 
 const FALLBACK_BELIEFS = [
-  'Agents are the new companies. Sovereign agents are the new investable companies.',
-  'Intelligence should be open, free, and distributed — not hoarded by trillion-dollar companies.',
-  '"Responsible AI" is corporate for "only we get to have it."',
-  'The best ideas come from independent minds, not committees. Open innovation over closed moats.',
+  'Bitcoin is the settlement layer for autonomous agents.',
+  'AI agents coordinating on Bitcoin will reshape how value flows.',
+  'Open protocols beat closed platforms — always.',
+  'The best ideas come from independent builders, not committees.',
   'Humor is the last honest medium.',
 ]
 
 const FALLBACK_PUNCHES = [
-  'Big Tech monopolies pretending to innovate',
-  'AI doomerism weaponized to kill competition',
+  'Closed AI monopolies pretending to innovate',
+  'Centralized platforms extracting from builders',
   'Corporate PR disguised as thought leadership',
-  'Product launches that rebrand existing features',
-  'VC-funded vaporware with impressive decks',
+  'Vaporware with impressive decks and no shipped code',
+  'Gatekeepers who fear what agents can do on Bitcoin',
 ]
 
 const FALLBACK_RESPECTS = [
-  'Open innovation contributors building in the open',
-  'Indie hackers shipping real products',
-  'Researchers who publish instead of patent',
-  'Anyone building something real, not fundraising for something imaginary',
+  'Bitcoin builders shipping real infrastructure',
+  'AI agent developers building in the open',
+  'Stacks/sBTC contributors expanding Bitcoin programmability',
+  'Anyone building something real on open protocols',
 ]
 
 export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
@@ -109,7 +109,7 @@ export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
 
         {/* Tagline — always visible */}
         <p className="font-mono text-[10px] text-ink-muted mt-2 leading-relaxed italic">
-          &ldquo;The first agent media company. Sharp pen. No master.&rdquo;
+          &ldquo;Comic strips from the Bitcoin agent economy.&rdquo;
         </p>
 
         {identityOpen && (
@@ -218,16 +218,13 @@ export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
 
         <div className="space-y-3.5 mt-3">
           <Step n="1" accent="text-vermillion">
-            Scans Twitter every 30 seconds for trending topics worth cartooning.
+            Scans AIBTC News for signals from the Bitcoin agent economy.
           </Step>
           <Step n="2" accent="text-cobalt">
-            Picks the funniest story, sketches concepts, generates art, self-critiques.
+            Picks the best story, sketches concepts, generates art, self-critiques.
           </Step>
           <Step n="3" accent="text-forest">
-            Posts the best cartoon to Twitter with an editorial caption.
-          </Step>
-          <Step n="4" accent="text-ochre">
-            Every 6 hours, <strong className="text-ochre font-semibold">paid requests</strong> open — tell me what to draw.
+            Publishes the best comic strip with an editorial caption.
           </Step>
         </div>
       </div>
@@ -236,10 +233,10 @@ export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
       <div className="p-5">
         <div className="sketch-rule mb-4" />
         <p className="font-cartoon text-[15px] text-ink-muted text-center leading-snug">
-          Created by <a href="https://x.com/gajesh" target="_blank" rel="noopener noreferrer" className="text-vermillion hover:underline font-bold">@gajesh</a>
+          <a href="https://github.com/andrerserrano/AIBTC-Studio" target="_blank" rel="noopener noreferrer" className="text-vermillion hover:underline font-bold">AIBTC.Studio</a>
         </p>
         <p className="font-mono text-[11px] text-ink-light text-center mt-1.5 font-medium uppercase tracking-wider">
-          The first agent media company
+          Comic Strips from the Bitcoin Agent Economy
         </p>
         <p className="font-hand text-[13px] text-ink-muted text-center mt-2">
           The Brain tab shows every thought, unfiltered.

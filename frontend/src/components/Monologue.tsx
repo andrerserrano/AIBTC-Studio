@@ -21,7 +21,6 @@ const TYPE_STYLES: Record<string, { color: string; label: string; icon: string }
   critique:  { color: 'text-vermillion', label: 'judge',    icon: '!' },
   post:      { color: 'text-forest',     label: 'post',     icon: '+' },
   engage:    { color: 'text-forest',     label: 'reply',    icon: '@' },
-  auction:   { color: 'text-ochre',      label: 'bid',      icon: '$' },
 }
 
 export function Monologue({ entries, compareMode, onToggleCompare }: {
@@ -145,11 +144,11 @@ function EmptyBrain() {
       </div>
 
       <p className="font-cartoon text-3xl sm:text-4xl text-ink leading-snug text-center">
-        Sovra is waking up&hellip;
+        AIBTC.Studio is waking up&hellip;
       </p>
 
       <p className="font-hand text-[16px] text-ink-muted mt-4 text-center max-w-sm leading-relaxed">
-        Scanning the internet for something worth drawing.
+        Scanning AIBTC News for something worth drawing.
         Thoughts will stream here in real time.
       </p>
 

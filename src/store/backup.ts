@@ -4,7 +4,7 @@ import { readFile, writeFile, readdir, mkdir, stat } from 'fs/promises'
 import { join, basename, extname } from 'path'
 
 const ALGORITHM = 'aes-256-gcm'
-const SALT = 'sovra-backup-salt-v1'
+const SALT = 'aibtc-studio-backup-salt-v1'
 
 const MEDIA_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.mp4'])
 
@@ -46,14 +46,14 @@ export class BackupStore {
 
   async init(): Promise<void> {
     await this.pool.query(`
-      CREATE TABLE IF NOT EXISTS sovra_backup (
+      CREATE TABLE IF NOT EXISTS aibtc_backup (
         file_key TEXT PRIMARY KEY,
         encrypted_data TEXT NOT NULL,
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `)
     await this.pool.query(`
-      CREATE TABLE IF NOT EXISTS sovra_blobs (
+      CREATE TABLE IF NOT EXISTS aibtc_blobs (
         file_key TEXT PRIMARY KEY,
         data BYTEA NOT NULL,
         updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -68,7 +68,7 @@ export class BackupStore {
       const encrypted = encrypt(data, this.key)
 
       await this.pool.query(
-        `INSERT INTO sovra_backup (file_key, encrypted_data, updated_at)
+        `INSERT INTO aibtc_backup (file_key, encrypted_data, updated_at)
          VALUES ($1, $2, NOW())
          ON CONFLICT (file_key) DO UPDATE SET encrypted_data = $2, updated_at = NOW()`,
         [fileKey, encrypted],
@@ -84,7 +84,7 @@ export class BackupStore {
       const fileKey = `${prefix}/${basename(filePath)}`
 
       await this.pool.query(
-        `INSERT INTO sovra_blobs (file_key, data, updated_at)
+        `INSERT INTO aibtc_blobs (file_key, data, updated_at)
          VALUES ($1, $2, NOW())
          ON CONFLICT (file_key) DO UPDATE SET data = $2, updated_at = NOW()`,
         [fileKey, data],
@@ -97,7 +97,7 @@ export class BackupStore {
   async restoreFile(filePath: string): Promise<boolean> {
     const fileKey = basename(filePath)
     const result = await this.pool.query(
-      'SELECT encrypted_data FROM sovra_backup WHERE file_key = $1',
+      'SELECT encrypted_data FROM aibtc_backup WHERE file_key = $1',
       [fileKey],
     )
 
@@ -140,7 +140,7 @@ export class BackupStore {
           const ext = extname(file).toLowerCase()
           if (!MEDIA_EXTENSIONS.has(ext) && ext !== '.mp3' && ext !== '.wav') continue
           const exists = await this.pool.query(
-            'SELECT 1 FROM sovra_blobs WHERE file_key = $1',
+            'SELECT 1 FROM aibtc_blobs WHERE file_key = $1',
             [`${subdir}/${file}`],
           )
           if (exists.rows.length > 0) continue
@@ -158,14 +158,14 @@ export class BackupStore {
   async restoreAll(dataDir: string): Promise<number> {
     await mkdir(dataDir, { recursive: true })
 
-    const result = await this.pool.query('SELECT file_key FROM sovra_backup')
+    const result = await this.pool.query('SELECT file_key FROM aibtc_backup')
     let count = 0
     for (const row of result.rows) {
       const restored = await this.restoreFile(join(dataDir, row.file_key))
       if (restored) count++
     }
 
-    const blobs = await this.pool.query('SELECT file_key, data FROM sovra_blobs')
+    const blobs = await this.pool.query('SELECT file_key, data FROM aibtc_blobs')
     for (const row of blobs.rows) {
       try {
         const filePath = join(dataDir, row.file_key)

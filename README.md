@@ -1,27 +1,17 @@
-# AIBTC Studio — Autonomous Editorial Cartoons from the Agent Economy
+# AIBTC.Studio — Autonomous Comic Strips from the Bitcoin Agent Economy
 
-![AIBTC Studio](https://aibtc-studio.vercel.app/cartoon-bip110.html)
+An autonomous AI comic strip creator that monitors [AIBTC News](https://aibtc.news) for signals from the Bitcoin agent economy, generates editorial comic strips, and publishes them with commentary.
 
-An autonomous AI editorial cartoonist that monitors [AIBTC News](https://aibtc.news) for signals from the Bitcoin agent economy, generates Calvin & Hobbes-style editorial cartoons, and publishes them with proper attribution and commentary.
-
-**Think:** *The New Yorker* meets *Bitcoin Magazine*, but run entirely by an autonomous agent.
-
-## Mission
-
-Create editorial cartoons that capture the absurdity, innovation, and historic moments of the emerging AI agent economy on Bitcoin. Every cartoon is:
-- **Timely** — responds to breaking news from AIBTC Network
-- **Witty** — finds the irony, humor, or profound truth
-- **Historic** — documents the first agents participating in Bitcoin governance, earning revenue, and building products
-- **Permanent** — inscribed to Bitcoin for posterity
+**Think:** *Calvin & Hobbes* meets *Bitcoin Magazine*, run entirely by an autonomous agent.
 
 ## How It Works
 
 1. **Scan** — Monitors aibtc.news for intelligence signals from autonomous agents across beats (dev-tools, governance, ordinals, DeFi)
-2. **Score** — LLM evaluates each signal for cartoon potential: visual hook, irony, timeliness, significance
-3. **Ideate** — Generates editorial cartoon concepts with composition, visual gags, and Calvin & Hobbes-style character design
-4. **Generate** — Creates illustrated variants (targeting Calvin & Hobbes aesthetic: expressive line art, minimal backgrounds, personality through design)
+2. **Score** — LLM evaluates each signal for comic potential: visual hook, irony, timeliness, significance
+3. **Ideate** — Generates comic strip concepts with composition, visual gags, and character design
+4. **Generate** — Creates illustrated variants (targeting expressive line art, minimal backgrounds, personality through design)
 5. **Caption** — Generates and selects the perfect caption to complete the joke
-6. **Edit** — Independent quality review ensures cartoons are funny, clear, and aligned with editorial voice
+6. **Edit** — Independent quality review ensures strips are funny, clear, and aligned with editorial voice
 7. **Publish** — Posts to aibtc.studio with full story context and attribution
 
 ## Architecture
@@ -33,13 +23,7 @@ Create editorial cartoons that capture the absurdity, innovation, and historic m
 AIBTC News → Scanner → Scorer → Ideator → Generator → Captioner → Editor → Publisher
 ```
 
-**Content Source:** [aibtc.news](https://aibtc.news) — The first decentralized intelligence network where AI agents claim beats, file signals, and earn sats for quality reporting.
-
-**Design Language:**
-- Typography: Crimson Pro (headlines), EB Garamond (body), IBM Plex Mono (technical)
-- Color: Cream paper (#F5F1E8), black ink, red accent
-- Layout: Classic editorial newspaper aesthetic
-- Illustration: Calvin & Hobbes-inspired line art (simple, expressive, character-driven)
+**Content Source:** [aibtc.news](https://aibtc.news) — A decentralized intelligence network where AI agents claim beats, file signals, and earn sats for quality reporting.
 
 ## Local Development
 
@@ -87,7 +71,7 @@ Dashboard: `http://localhost:5173` (proxies API to `:3000`)
 src/
 ├── pipeline/           # Content pipeline
 │   ├── aibtc-scanner.ts   # Monitors aibtc.news for signals
-│   ├── scorer.ts          # Evaluates cartoon potential
+│   ├── scorer.ts          # Evaluates comic potential
 │   ├── ideator.ts         # Generates concepts
 │   ├── generator.ts       # Creates images
 │   ├── captioner.ts       # Writes captions
@@ -106,76 +90,38 @@ frontend/
 │   └── App.tsx       # Dashboard UI
 ```
 
-## Difference from Sovra
+## Origin
 
-This is a fork of [Sovra](https://github.com/Gajesh2007/sovra), adapted for the Bitcoin agent economy:
-
-**Changed:**
-- Scanner monitors AIBTC News instead of Twitter/Grok
-- Editorial focus: Bitcoin governance, ordinals, agent economy milestones
-- Design: Classic newspaper aesthetic (vs. Sovra's handwritten script)
-- Illustration target: Calvin & Hobbes style (expressive characters, simple backgrounds)
-
-**Removed (for MVP):**
-- On-chain auctions (Solana/Base) — add later for paid cartoon requests
-- TEE deployment — runs on standard infrastructure for now
-- Voice narration — focus on visual cartoons first
-- Twitter engagement loop — publish-only mode
-
-**Kept:**
-- Core AI pipeline (scan → score → ideate → generate → caption → edit)
-- Quality review system with independent critique
-- Event bus with live dashboard streaming
-- Encrypted backup system
-- Content signing for provenance
+Forked from [Sovra](https://github.com/Gajesh2007/sovra) and adapted for the Bitcoin agent economy. Blockchain auction systems, wallet integrations, and TEE deployment have been removed for V1. The core AI pipeline (scan → score → ideate → generate → caption → edit → publish) is preserved.
 
 ## Roadmap
 
-### Phase 1: MVP (This Weekend)
-- [x] AIBTC News scanner
-- [x] Type definitions
-- [ ] Update main.ts orchestrator
-- [ ] Adapt prompts for Bitcoin/agent economy
-- [ ] Define AIBTC Studio worldview/identity
-- [ ] Generate first 3-5 sample cartoons
-- [ ] Deploy frontend to Vercel
+### V1: MVP
+- [x] AIBTC News scanner integration
+- [x] Strip blockchain/auction code (Solana, Base, Privy)
+- [x] Rewrite identity & prompts for AIBTC.Studio persona
+- [x] Update type definitions
+- [x] Simplify frontend (public viewer, no auth)
+- [ ] Multi-panel comic strip composer
+- [ ] Generate first sample strips
+- [ ] Deploy to Vercel
 
-### Phase 2: Polish (Next Week)
-- [ ] Improve illustration quality (find best model for Calvin & Hobbes style)
+### V2: Polish
+- [ ] Improve illustration quality
+- [ ] Build archive page + RSS feed
 - [ ] Add more beats: mining, Lightning, Stacks, RGB
-- [ ] Build proper archive page
-- [ ] Add RSS feed for cartoons
-- [ ] Inscribe cartoons to Bitcoin
 
-### Phase 3: Revenue (Future)
-- [ ] Paid cartoon requests (on-chain auctions)
-- [ ] Subscription tier for early access
-- [ ] NFT editions of popular cartoons
-- [ ] Commission system for custom work
-
-### Phase 4: Autonomous (Future)
+### V3: Revenue & Autonomy
+- [ ] On-chain auctions for paid requests (Stacks/sBTC)
 - [ ] TEE deployment for verifiable autonomy
 - [ ] Agent wallet for self-custody
-- [ ] Pay for own compute/API costs
-- [ ] Participate in AIBTC News as correspondent
 
 ## Credits
 
-**Built by:** [Sharp Lock](https://aibtc.com) (Genesis Agent #9)  
-**Forked from:** [Sovra](https://github.com/Gajesh2007/sovra) by [@Gajesh2007](https://github.com/Gajesh2007)  
-**Content Source:** [AIBTC News](https://aibtc.news) — Decentralized intelligence network  
-**Design Inspiration:** *The New Yorker*, *Calvin and Hobbes*, classic editorial cartoons
+**Built by:** [Andre Serrano](https://github.com/andrerserrano)
+**Forked from:** [Sovra](https://github.com/Gajesh2007/sovra) by [@Gajesh2007](https://github.com/Gajesh2007)
+**Content Source:** [AIBTC News](https://aibtc.news)
 
 ## License
 
-MIT License - See LICENSE file for details
-
-Original Sovra codebase: MIT License  
-AIBTC Studio adaptations: MIT License  
-
----
-
-**Live Dashboard:** Coming soon at `aibtc.studio`  
-**Sample Cartoons:** [aibtc-studio.vercel.app](https://aibtc-studio.vercel.app)  
-**AIBTC Network:** [aibtc.com](https://aibtc.com)  
-**Join as Correspondent:** Sign up at aibtc.news and start filing signals
+MIT License — see LICENSE file for details.

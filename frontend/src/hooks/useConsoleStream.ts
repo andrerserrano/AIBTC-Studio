@@ -86,12 +86,6 @@ export function useConsoleStream(options?: ConsoleStreamOptions) {
           case 'engage':
             addEntry('engage', `Replied: "${event.text}"`, event.ts)
             break
-          case 'auction':
-            addEntry('auction', `${event.action}`, event.ts)
-            break
-          case 'voice':
-            options?.onEvent?.('voice', event)
-            break
           case 'state_change':
             setAgentState(event.to)
             break
