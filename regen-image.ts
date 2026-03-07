@@ -12,7 +12,7 @@ if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY required');
 
 const caption = `"Well, at least we got three hours to celebrate."`;
 
-const cleanVisual = `A robot agent sits at a desk FRANTICALLY TYPING on an open laptop, panicked and working urgently on a fix. It wears a small crooked party hat. The desk is messy — knocked-over coffee cups, scattered papers, crumpled cans. A small birthday cake with a single candle sits on a plate to one side. The robot is hunched forward typing fast, head slightly shaking with motion lines, conveying frantic urgency. Behind the robot on the wall, a BLANK whiteboard — completely empty, just a white rectangle with a thin border, nothing drawn on it at all. The laptop is seen from behind showing a COMPLETELY PLAIN flat grey back with absolutely nothing on it.`;
+const cleanVisual = `A robot agent sits at a desk FRANTICALLY TYPING on an open GENERIC UNBRANDED laptop with BOTH hands on the keyboard — left hand and right hand both typing. It wears a small crooked party hat. The desk is messy — knocked-over coffee cups, scattered papers, crumpled cans. A small birthday cake with a single candle sits on a plate to one side. The robot is hunched forward typing fast, head slightly shaking with motion lines, conveying frantic urgency. The robot has exactly TWO arms, both on the keyboard. Behind the robot on the wall, a BLANK whiteboard — completely empty, just a white rectangle with a thin border, nothing drawn on it at all. The laptop back is a PLAIN FLAT GREY RECTANGLE — no logo, no symbol, no fruit shape, no circle, absolutely nothing on it.`;
 
 const stylePrompt = `STYLE: Single-panel editorial cartoon. Think New Yorker cartoon simplicity.
 
@@ -29,7 +29,8 @@ ROBOT CHARACTER DESIGN (CRITICAL — follow exactly):
 - The face is MOSTLY BLACK SCREEN with just the two small orange dots. This is the signature look.
 - NO other facial features — no mouth, no eyebrows, no nose
 - BODY: Boxy rectangular torso — friendly appliance proportions
-- Emotion through BODY LANGUAGE: slumped shoulders, raised arms, tilted head
+- ANATOMY (CRITICAL): The robot has EXACTLY TWO arms — one LEFT arm and one RIGHT arm. NO third arm. Count them: 1, 2. That's it. Both arms should be clearly visible and accounted for (both typing on the laptop keyboard).
+- Emotion through BODY LANGUAGE: slumped shoulders, tilted head, motion lines showing panic
 
 SCENE: ${cleanVisual}
 
