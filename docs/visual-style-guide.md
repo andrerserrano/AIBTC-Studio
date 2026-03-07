@@ -131,11 +131,12 @@ HUMAN CHARACTER DESIGN (when present):
   bewildered construction worker
 
 BITCOIN/CRYPTO SYMBOL USAGE:
-- Bitcoin ₿ symbols should appear as ENVIRONMENTAL DETAILS, never as the focal point
-- Treat them like logos on buildings, icons on screens, badges on equipment
+- Bitcoin ₿ symbols must be TINY and INCIDENTAL — a small icon on a coffee mug, a tiny
+  logo on a laptop sticker, a badge on a robot's chest, a subtle mark on a document
+- NEVER as a standalone floating symbol, large background element, or prominent focal point
+- The ₿ should be something you notice on second or third look, not first
 - Render in the same greyscale as surroundings — never highlighted, glowing, or colored
 - They should contextualize the scene ("this is Bitcoin infrastructure") not dominate it
-- A viewer should notice the ₿ on their second look, not their first
 - NEVER render Bitcoin symbols on fire, exploding, or in distress — this reads as
   negative commentary on Bitcoin itself regardless of intent
 - Lightning bolt symbols (for Lightning Network) get the same treatment: small, environmental

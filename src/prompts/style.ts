@@ -66,8 +66,10 @@ CHARACTER DESIGN — HUMANS (when present):
   bewildered construction worker with hard hat and safety vest
 
 BITCOIN/CRYPTO SYMBOL USAGE:
-- Bitcoin symbols should appear as ENVIRONMENTAL DETAILS, never as the focal point
-- Treat them like logos on buildings, icons on screens, badges on equipment
+- Bitcoin ₿ symbols must be TINY and INCIDENTAL — a small icon on a coffee mug, a tiny
+  logo on a laptop sticker, a badge on a robot's chest, a subtle mark on a document.
+- NEVER as a standalone floating symbol, large background element, or prominent focal point.
+  The ₿ should be something you notice on second or third look, not first.
 - Render in the same greyscale as surroundings — never highlighted, glowing, or colored
 - They should contextualize the scene ("this is Bitcoin infrastructure") not dominate it
 - NEVER render Bitcoin symbols on fire, exploding, or in distress
