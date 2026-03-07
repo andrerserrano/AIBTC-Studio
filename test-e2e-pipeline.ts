@@ -26,80 +26,69 @@ console.log('STEP 1: SCANNING NEWS SOURCES');
 console.log('═══════════════════════════════════════\n');
 
 async function scanSources() {
-  // Scan AIBTC News
+  const allSignals: any[] = [];
+
+  // --- Source 1: AIBTC News ---
+  console.log('--- AIBTC News ---');
   try {
     const aibtcRes = await fetch('https://aibtc.news/api/signals?limit=20');
     if (aibtcRes.ok) {
       const data = await aibtcRes.json();
-      console.log(`✅ AIBTC News: Fetched ${Array.isArray(data) ? data.length : data?.signals?.length || 'unknown'} signals`);
       const signals = Array.isArray(data) ? data : data?.signals || [];
-      // Show first few
+      console.log(`✅ AIBTC News: ${signals.length} signals`);
       for (const s of signals.slice(0, 5)) {
         console.log(`   → ${s.title || s.headline || s.summary?.slice(0, 80) || JSON.stringify(s).slice(0, 80)}`);
       }
-      return signals;
+      allSignals.push(...signals.map(s => ({ ...s, source: s.source || 'AIBTC News' })));
     } else {
-      console.log(`⚠️  AIBTC News API returned ${aibtcRes.status}, trying alternate endpoints...`);
-
-      // Try alternate endpoints
+      console.log(`⚠️  AIBTC News API returned ${aibtcRes.status}, trying alternates...`);
       for (const path of ['/api/v1/signals', '/api/news', '/api/feed']) {
-        const res = await fetch(`https://aibtc.news${path}`);
-        if (res.ok) {
-          const data = await res.json();
-          console.log(`✅ AIBTC News (${path}): Got data`);
-          return Array.isArray(data) ? data : data?.signals || data?.items || [];
-        }
+        try {
+          const res = await fetch(`https://aibtc.news${path}`);
+          if (res.ok) {
+            const data = await res.json();
+            const items = Array.isArray(data) ? data : data?.signals || data?.items || [];
+            console.log(`✅ AIBTC News (${path}): ${items.length} items`);
+            allSignals.push(...items.map(s => ({ ...s, source: 'AIBTC News' })));
+            break;
+          }
+        } catch {}
       }
     }
   } catch (e) {
     console.log(`⚠️  AIBTC News scan failed: ${e.message}`);
   }
 
-  // Try scraping AIBTC News homepage
-  try {
-    const res = await fetch('https://aibtc.news');
-    if (res.ok) {
-      const html = await res.text();
-      console.log(`✅ AIBTC News homepage fetched (${html.length} chars)`);
-      // Extract headlines from HTML
-      const titles = [...html.matchAll(/<h[1-3][^>]*>([^<]+)<\/h/gi)].map(m => m[1].trim()).filter(t => t.length > 10);
-      console.log(`   Found ${titles.length} headlines:`);
-      titles.slice(0, 5).forEach(t => console.log(`   → ${t}`));
-    }
-  } catch (e) {
-    console.log(`⚠️  Could not fetch aibtc.news: ${e.message}`);
-  }
-
-  // Scan Bitcoin Magazine RSS
+  // --- Source 2: Bitcoin Magazine RSS ---
   console.log('\n--- Bitcoin Magazine ---');
   try {
     const btcRes = await fetch('https://bitcoinmagazine.com/feed');
     if (btcRes.ok) {
       const xml = await btcRes.text();
-      const titles = [...xml.matchAll(/<title><!\[CDATA\[([^\]]+)\]\]><\/title>/g)].map(m => m[1]);
-      const altTitles = titles.length === 0 ? [...xml.matchAll(/<title>([^<]+)<\/title>/g)].map(m => m[1]) : titles;
-      console.log(`✅ Bitcoin Magazine: Fetched ${altTitles.length} articles`);
-      altTitles.slice(0, 5).forEach(t => console.log(`   → ${t}`));
-      return altTitles.map((title, i) => ({ id: `btcmag-${i}`, title, source: 'Bitcoin Magazine' }));
+      // Parse <item> blocks for title + description
+      const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)];
+      const parsed = items.map((m, i) => {
+        const block = m[1];
+        const title = block.match(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/)?.[1] || '';
+        const desc = block.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/)?.[1] || '';
+        const link = block.match(/<link>(.*?)<\/link>/)?.[1] || '';
+        // Strip HTML from description
+        const cleanDesc = desc.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 200);
+        return { id: `btcmag-${i}`, title: title.trim(), summary: cleanDesc, link, source: 'Bitcoin Magazine' };
+      }).filter(item => item.title && item.title !== 'Bitcoin Magazine');
+
+      console.log(`✅ Bitcoin Magazine: ${parsed.length} articles`);
+      parsed.slice(0, 5).forEach(t => console.log(`   → ${t.title}`));
+      allSignals.push(...parsed);
+    } else {
+      console.log(`⚠️  Bitcoin Magazine RSS returned ${btcRes.status}`);
     }
   } catch (e) {
     console.log(`⚠️  Bitcoin Magazine RSS failed: ${e.message}`);
   }
 
-  // Fallback: use web search-style fetch
-  console.log('\n--- Fallback: Direct fetch ---');
-  try {
-    const res = await fetch('https://bitcoinmagazine.com/');
-    const html = await res.text();
-    const titles = [...html.matchAll(/<h[1-4][^>]*>([^<]{15,})<\/h/gi)].map(m => m[1].trim());
-    console.log(`✅ Bitcoin Magazine homepage: ${titles.length} headlines`);
-    titles.slice(0, 5).forEach(t => console.log(`   → ${t}`));
-    return titles.map((title, i) => ({ id: `btcmag-${i}`, title, source: 'Bitcoin Magazine' }));
-  } catch (e) {
-    console.log(`⚠️  Fallback failed: ${e.message}`);
-  }
-
-  return [];
+  console.log(`\n📊 Total signals from all sources: ${allSignals.length}`);
+  return allSignals;
 }
 
 // Step 2: Use Claude to score and select the best story
