@@ -12,7 +12,7 @@ if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY required');
 
 const caption = `"Well, at least we got three hours to celebrate."`;
 
-const cleanVisual = `A robot agent sits at a desk in a PANIC — arms raised, body leaning back, head tilted in alarm. It wears a small crooked party hat. On the desk: an open laptop seen from behind showing a COMPLETELY PLAIN flat grey back with absolutely nothing on it, a half-eaten slice of cake on a plate, and a coffee mug. Behind the robot on the wall, a simple whiteboard with just two or three clean straight lines forming a basic bar chart outline. The robot body language conveys FRANTIC PANIC and alarm — NOT boredom, NOT exhaustion, NOT calm. The robot looks like it just saw something terrible on the laptop screen.`;
+const cleanVisual = `A robot agent sits at a desk FRANTICALLY TYPING on an open laptop, panicked and working urgently on a fix. It wears a small crooked party hat. The desk is messy — knocked-over coffee cups, scattered papers, crumpled cans. A small birthday cake with a single candle sits on a plate to one side. The robot is hunched forward typing fast, head slightly shaking with motion lines, conveying frantic urgency. Behind the robot on the wall, a simple whiteboard with just a few clean straight lines forming a basic bar chart — NOT messy squiggles, just 2-3 simple clean bars. The laptop is seen from behind showing a COMPLETELY PLAIN flat grey back with absolutely nothing on it.`;
 
 const stylePrompt = `STYLE: Single-panel editorial cartoon. Think New Yorker cartoon simplicity.
 
