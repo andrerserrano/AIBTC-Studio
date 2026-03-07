@@ -23,8 +23,9 @@ VISUAL IDENTITY — MONOCHROME + BITCOIN ORANGE:
 - Everything else is white, light grey, medium grey, dark grey, black
 - The orange pops BECAUSE it's the only warmth in an otherwise monochrome image
 - NEVER introduce blues, teals, purples, greens, or any hue other than orange
-- Clean white/cream CANVAS — the page itself is always white or cream, NEVER grey or tinted.
-  Environments and architecture are drawn ON the white canvas in greyscale.
+- PURE WHITE CANVAS (#FFFFFF) — the page background is always pure white, NEVER cream,
+  off-white, beige, ivory, or any warm/tinted tone. This is a newspaper comic strip on
+  bright white paper. Environments and architecture are drawn ON the white canvas in greyscale.
 - COUNT THE ORANGE: if more than 4 orange elements appear, it's too many. Ideal is 2-3.
 
 ROBOT CHARACTER DESIGN — THE SIGNATURE LOOK:
@@ -162,7 +163,7 @@ SCENE: ${sceneDescription}
 CRITICAL STYLE REQUIREMENTS:
 ${STYLE_TEMPLATE}
 
-Remember: white/cream canvas, halftone dot-shading, monochrome + orange eyes only, no brand logos.`
+Remember: PURE WHITE background (#FFFFFF, no cream/beige/ivory), halftone dot-shading, monochrome + orange eyes only, no brand logos.`
 }
 
 /**
