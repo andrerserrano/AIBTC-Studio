@@ -11,7 +11,7 @@ import type { CartoonConcept, StripConcept, Panel } from '../types.js'
 import { Cache } from '../cache/cache.js'
 import { EventBus } from '../console/events.js'
 import { config } from '../config/index.js'
-import { STYLE_TEMPLATE, buildScenePrompt } from '../prompts/style.js'
+import { STYLE_TEMPLATE, buildScenePrompt, stripTextFromVisual } from '../prompts/style.js'
 import type { TwitterReadProvider } from '../twitter/provider.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -141,7 +141,7 @@ export class Generator {
       '',
       `CONTEXT: "${concept.headline}" — ${concept.narrativeArc}`,
       '',
-      `SCENE: ${panel.visual}`,
+      `SCENE: ${stripTextFromVisual(panel.visual)}`,
       '',
       `COMPOSITION: ${panel.composition}`,
     ].join('\n'))
@@ -351,7 +351,7 @@ export class Generator {
       `The humor works through ${concept.jokeType.toLowerCase()}. The image must set up or amplify this comedic mechanism visually.`,
       '',
       `SCENE DESCRIPTION:`,
-      concept.visual,
+      stripTextFromVisual(concept.visual),
       '',
       `COMPOSITION & CAMERA:`,
       concept.composition,

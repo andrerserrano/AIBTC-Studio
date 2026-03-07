@@ -38,13 +38,37 @@ Your job:
    If you can write a better one (shorter, sharper, funnier), provide it as revisedCaption.
    Keep it under 100 characters. No hashtags, no emojis.
 
-4. IMAGE REVIEW — You can SEE the generated cartoon. Check:
-   - No text, words, or letters leaked into the image (common failure — instant reject)
+4. IMAGE REVIEW — You can SEE the generated cartoon. Check EVERY item:
+   TEXT CHECK (instant reject if any fail):
+   - No text, words, or letters leaked into the image
+   - No speech bubbles, signs, labels, banners, or readable screen text
+   - Whiteboards/boards in the scene must be COMPLETELY BLANK — no squiggles, charts, or marks
+
+   ROBOT ANATOMY CHECK (instant reject if any fail):
+   - Every robot has EXACTLY TWO arms (one left, one right) — count them. Three arms = reject.
+   - Every robot has EXACTLY TWO legs — no extra limbs of any kind
+   - Robot heads are dark/black screens with small orange dot-eyes — no mouths, eyebrows, or noses
+
+   BRAND & STYLE CHECK (instant reject if any fail):
+   - Background is WHITE or very light cream — NEVER grey or dark. If the background looks grey, reject.
+   - NO real-world brand logos anywhere — especially no Apple logo on laptop backs
+   - Laptops must have completely plain, flat backs — no logos, symbols, or decorations
+   - All devices (laptops, monitors, phones) must be generic and unbranded
+
+   ORANGE ACCENT CHECK (reject if excessive):
+   - Orange (#E8740C) should appear ONLY on robot eyes + at most 1-2 small props
+   - Orange must be applied directly to objects (e.g. a flame itself), NOT as circles, halos, or glowing orbs
+   - If more than 3-4 orange elements appear, it's too many — reject
+   - Flames and fire should be orange (natural use of accent color)
+
+   COMPOSITION CHECK:
    - The visual gag is clear and readable at a glance
-   - Characters look intentional, not garbled (no extra limbs, melted faces)
+   - Characters look intentional, not garbled
    - The composition matches what was described in the concept
-   - The style is consistent with AIBTC Media's editorial comic strip aesthetic
-   If the image has text in it or looks broken, reject immediately.
+   - Maximum 3 characters in frame
+   - Clean negative space — not cluttered or busy
+
+   If ANY of the above checks fail, reject immediately and describe the specific issue in imageIssues.
 
 5. BRAND ALIGNMENT — Does this fit AIBTC Media's identity? Is it punching up? Is it on-theme?
    Random viral humor with no connection to Bitcoin agents / open protocols / agent economy = reject.

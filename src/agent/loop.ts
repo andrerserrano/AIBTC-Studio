@@ -255,7 +255,6 @@ export class AgentLoop {
       const review = await this.editor.review(best, caption, variants[0], allPosts, allCartoons)
 
       if (!review.approved) {
-        await this.blacklistTopic(topic.summary)
         await this.rejectedCartoons.update(
           (list) => [...list, {
             caption,
@@ -265,6 +264,35 @@ export class AgentLoop {
           }].slice(-50),
           [],
         )
+
+        // If rejected for image issues (not duplicate/quality), retry with editor feedback
+        const isImageIssue = !review.reason.toLowerCase().includes('duplicate')
+          && review.qualityScore >= 5
+        if (isImageIssue) {
+          this.events.monologue(`Editor found image issues. Retrying with feedback: "${review.reason.slice(0, 120)}"`)
+          let retried = false
+          for (let retry = 1; retry <= config.maxImageRetries; retry++) {
+            const retryResult = await this.generator.retry(best, review.reason, retry)
+            if (retryResult.variants.length === 0) continue
+
+            variants = retryResult.variants
+            prompt = retryResult.prompt
+            caption = await this.captioner.generate(best, recentSummaries)
+
+            const retryReview = await this.editor.review(best, caption, variants[0], allPosts, allCartoons)
+            if (retryReview.approved) {
+              caption = retryReview.caption
+              retried = true
+              this.events.monologue(`Retry ${retry} approved by editor (quality ${retryReview.qualityScore}/10).`)
+              break
+            }
+            this.events.monologue(`Retry ${retry} still rejected: ${retryReview.reason.slice(0, 80)}`)
+          }
+          if (retried) break
+        }
+
+        // Blacklist and move on if retries didn't help or it was a duplicate/quality issue
+        await this.blacklistTopic(topic.summary)
         this.events.monologue(`Editor rejected topic ${ti + 1}. Blacklisted. Trying next...`)
         best = null
         continue
@@ -360,7 +388,7 @@ export class AgentLoop {
       result = await this.generator.retry(concept, 'Simplify.', 1)
     }
     if (result.variants.length === 0) return
-    const { variants, prompt } = result
+    let { variants, prompt } = result
 
     let caption = await this.captioner.generate(concept)
 
@@ -370,12 +398,40 @@ export class AgentLoop {
     const review = await this.editor.review(concept, caption, variants[0], allPosts, allCartoons)
 
     if (!review.approved) {
-      await this.blacklistTopic(topic.summary)
-      this.events.monologue(`Quick-hit rejected by editor. Topic blacklisted. Moving on.`)
-      return
-    }
+      // If rejected for image issues (not duplicate/quality), retry with feedback
+      const isImageIssue = !review.reason.toLowerCase().includes('duplicate')
+        && review.qualityScore >= 5
+      if (isImageIssue) {
+        this.events.monologue(`Quick-hit image issues. Retrying with feedback: "${review.reason.slice(0, 120)}"`)
+        for (let retry = 1; retry <= config.maxImageRetries; retry++) {
+          const retryResult = await this.generator.retry(concept, review.reason, retry)
+          if (retryResult.variants.length === 0) continue
 
-    caption = review.caption
+          variants = retryResult.variants
+          prompt = retryResult.prompt
+          caption = await this.captioner.generate(concept)
+
+          const retryReview = await this.editor.review(concept, caption, variants[0], allPosts, allCartoons)
+          if (retryReview.approved) {
+            caption = retryReview.caption
+            this.events.monologue(`Quick-hit retry ${retry} approved (quality ${retryReview.qualityScore}/10).`)
+            // Fall through to compose + post
+            break
+          }
+          if (retry === config.maxImageRetries) {
+            await this.blacklistTopic(topic.summary)
+            this.events.monologue(`Quick-hit retries exhausted. Topic blacklisted. Moving on.`)
+            return
+          }
+        }
+      } else {
+        await this.blacklistTopic(topic.summary)
+        this.events.monologue(`Quick-hit rejected by editor. Topic blacklisted. Moving on.`)
+        return
+      }
+    } else {
+      caption = review.caption
+    }
 
     // Compose the final framed cartoon (image + orange divider + caption)
     const composedPath = await this.composer.composeCartoon(variants[0], caption)
