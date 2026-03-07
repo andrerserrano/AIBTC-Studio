@@ -70,15 +70,14 @@ export class Composer {
   async composeWithCaption(imageBuffer: Buffer, caption: string): Promise<Buffer> {
     const {
       fontFamily,
-      fontSize,
+      fontSize: baseFontSize,
       fontStyle,
       color,
       dividerColor,
       dividerWidth,
       backgroundColor,
-      captionHeight,
       maxCharsPerLine,
-      lineHeight,
+      lineHeight: baseLineHeight,
     } = CAPTION_STYLE
 
     // Trim excess whitespace from the generated image
@@ -90,11 +89,22 @@ export class Composer {
     // Layout dimensions
     const padding = 20
     const totalWidth = imgW + padding * 2
-    const totalHeight = imgH + captionHeight + padding * 2
 
     // Word wrap the caption
     const lines = this.wrapText(caption, maxCharsPerLine)
-    const captionStartY = imgH + padding * 2 + 8
+
+    // Auto-scale font if caption is very long (3+ lines)
+    const fontSize = lines.length > 2 ? Math.round(baseFontSize * 0.85) : baseFontSize
+    const lineHeight = lines.length > 2 ? Math.round(baseLineHeight * 0.85) : baseLineHeight
+
+    // Dynamic caption height: adapts to the number of wrapped lines
+    const captionPaddingTop = 12
+    const captionPaddingBottom = 16
+    const captionHeight = captionPaddingTop + lines.length * lineHeight + captionPaddingBottom
+
+    const totalHeight = imgH + captionHeight + padding * 2
+
+    const captionStartY = imgH + padding * 2 + captionPaddingTop
     const dividerY = imgH + padding * 2
 
     // Render caption text elements

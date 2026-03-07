@@ -3,7 +3,20 @@
  *
  * Tests: Scan → Score → Ideate → Generate → Caption → Compose → Inscribe
  * Outputs: Final cartoon image + provenance data for homepage card #4
+ *
+ * Usage: bun run test-e2e-pipeline.ts
+ * (No need for `export $(grep ...)`  — .env is loaded below)
  */
+
+// Load .env properly (handles values with spaces like ORDINALS_MNEMONIC)
+import { readFileSync } from 'fs';
+for (const line of readFileSync('.env', 'utf8').split('\n')) {
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.startsWith('#')) continue;
+  const eqIdx = trimmed.indexOf('=');
+  if (eqIdx === -1) continue;
+  process.env[trimmed.slice(0, eqIdx).trim()] = trimmed.slice(eqIdx + 1).trim();
+}
 
 import { config } from './src/config/index.js';
 
@@ -294,19 +307,46 @@ async function composeCartoon(imagePath: string, concept: any) {
   const w = meta.width || 1024;
   const h = meta.height || 1024;
 
-  // Create caption bar (orange divider + italic caption on white)
-  const captionHeight = Math.round(h * 0.14);
+  // Word-wrap caption to prevent text clipping
+  const maxCharsPerLine = 55;
+  function wrapText(text: string): string[] {
+    const words = text.split(' ');
+    const lines: string[] = [];
+    let current = '';
+    for (const word of words) {
+      if ((current + ' ' + word).trim().length > maxCharsPerLine) {
+        lines.push(current.trim());
+        current = word;
+      } else {
+        current = (current + ' ' + word).trim();
+      }
+    }
+    if (current) lines.push(current.trim());
+    return lines;
+  }
+
+  const lines = wrapText(concept.caption);
+  // Scale font down for long captions (3+ lines)
+  const fontSize = lines.length > 2 ? 16 : 20;
+  const lineHeight = lines.length > 2 ? 24 : 28;
+  const captionPaddingTop = 12;
+  const captionPaddingBottom = 16;
   const dividerHeight = 4;
-  const fontSize = Math.round(captionHeight * 0.35);
-  const captionText = concept.caption.replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+  // Dynamic caption height based on number of wrapped lines
+  const captionHeight = dividerHeight + captionPaddingTop + lines.length * lineHeight + captionPaddingBottom;
+
+  // Build caption SVG with wrapped text lines
+  const textElements = lines.map((line, i) => {
+    const y = dividerHeight + captionPaddingTop + i * lineHeight + fontSize;
+    const escaped = line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    return `<text x="${w / 2}" y="${y}" text-anchor="middle" font-family="Georgia, serif" font-size="${fontSize}" font-style="italic" fill="#1a1a1a">${escaped}</text>`;
+  }).join('\n');
 
   const captionSvg = Buffer.from(`
     <svg width="${w}" height="${captionHeight}" xmlns="http://www.w3.org/2000/svg">
       <rect x="0" y="0" width="${w}" height="${dividerHeight}" fill="#E8740C"/>
       <rect x="0" y="${dividerHeight}" width="${w}" height="${captionHeight - dividerHeight}" fill="#ffffff"/>
-      <text x="${w / 2}" y="${dividerHeight + (captionHeight - dividerHeight) * 0.6}"
-            font-family="Georgia, serif" font-size="${fontSize}" font-style="italic"
-            fill="#1a1a1a" text-anchor="middle">${captionText}</text>
+      ${textElements}
     </svg>
   `);
 
