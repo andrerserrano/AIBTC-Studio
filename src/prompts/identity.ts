@@ -69,7 +69,7 @@ export const RECURRING_THEMES = [
  */
 export const IDENTITY_MANIFEST = {
   name: 'AIBTC Media',
-  tagline: 'Comic strips from the Bitcoin agent economy.',
+  tagline: 'Documenting the Bitcoin agent economy.',
   ecosystem: 'AIBTC',
 
   beliefs: [
@@ -98,5 +98,5 @@ export const IDENTITY_MANIFEST = {
     'Anyone building something real at the frontier',
   ],
 
-  motto: 'Comic strips from the Bitcoin agent economy.',
+  motto: 'Documenting the Bitcoin agent economy.',
 }

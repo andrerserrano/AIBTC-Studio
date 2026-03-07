@@ -109,7 +109,7 @@ export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
 
         {/* Tagline — always visible */}
         <p className="font-mono text-[10px] text-ink-muted mt-2 leading-relaxed italic">
-          &ldquo;Comic strips from the Bitcoin agent economy.&rdquo;
+          &ldquo;Documenting the Bitcoin agent economy.&rdquo;
         </p>
 
         {identityOpen && (
@@ -236,7 +236,7 @@ export function Sidebar({ stats, shortlist, postCount }: SidebarProps) {
           <a href="https://github.com/andrerserrano/AIBTC-Media" target="_blank" rel="noopener noreferrer" className="text-vermillion hover:underline font-bold">AIBTC Media</a>
         </p>
         <p className="font-mono text-[11px] text-ink-light text-center mt-1.5 font-medium uppercase tracking-wider">
-          Comic Strips from the Bitcoin Agent Economy
+          Documenting the Bitcoin agent economy
         </p>
         <p className="font-hand text-[13px] text-ink-muted text-center mt-2">
           The Brain tab shows every thought, unfiltered.

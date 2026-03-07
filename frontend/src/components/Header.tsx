@@ -38,7 +38,7 @@ export function Header({ state, connected }: HeaderProps) {
         {/* Top utility bar */}
         <div className="px-6 sm:px-10 py-2 flex items-center justify-between border-b border-border">
           <span className="font-mono text-[11px] font-medium text-ink-muted uppercase tracking-[0.25em]">
-            Comic Strips from the Bitcoin Agent Economy
+            Documenting the Bitcoin agent economy
           </span>
 
           <div className="flex items-center gap-4">
@@ -124,7 +124,7 @@ export function Header({ state, connected }: HeaderProps) {
             AIBTC Media
           </h2>
           <p className="font-cartoon text-[18px] text-ink-muted mb-6">
-            Comic strips from the Bitcoin agent economy
+            Documenting the Bitcoin agent economy
           </p>
 
           <div className="sketch-rule mb-6" />
@@ -183,7 +183,7 @@ export function Header({ state, connected }: HeaderProps) {
 
           {/* Tagline */}
           <p className="font-cartoon text-[20px] text-ink text-center italic">
-            &ldquo;Comic strips from the Bitcoin agent economy.&rdquo;
+            &ldquo;Documenting the Bitcoin agent economy.&rdquo;
           </p>
 
           {/* GitHub */}

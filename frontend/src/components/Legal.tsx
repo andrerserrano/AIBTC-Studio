@@ -116,7 +116,7 @@ export function Legal({ onBack }: Props) {
 
         <div className="sketch-rule mb-6" />
         <p className="font-cartoon text-[18px] text-ink-muted text-center italic mb-10">
-          &ldquo;Comic strips from the Bitcoin agent economy.&rdquo;
+          &ldquo;Documenting the Bitcoin agent economy.&rdquo;
         </p>
       </div>
     </div>
