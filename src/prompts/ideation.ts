@@ -35,7 +35,11 @@ For each concept, provide:
 Rules:
 - Each concept must use a DIFFERENT joke angle. Don't generate variations of the same gag.
 - Keep visuals SIMPLE — single panel, 1-3 characters max, clear focal point.
-- No text IN the image. The caption is separate and posted alongside.
+- ABSOLUTELY no text IN the image. The caption is separate and posted alongside.
+  This means your VISUAL description must NEVER describe readable text on screens, signs,
+  banners, labels, or badges. Instead of "monitor showing '404 ERROR'", write
+  "monitor with abstract error-like lines". Instead of "banner reading 'LAUNCH DAY'",
+  write "a small celebratory banner". The image generator WILL render any text you describe.
 - The best comics have ONE visual gag and ONE caption that click together like a deadbolt.
 - Think about what makes someone screenshot this and send it to a group chat.
 - The visual should be immediately readable — if you need to study it to get the joke, it's too complex.

@@ -217,20 +217,45 @@ async function generateImage(concept: any) {
   console.log('STEP 4: IMAGE GENERATION (GEMINI)');
   console.log('═══════════════════════════════════════\n');
 
-  const stylePrompt = `STYLE: Single-panel editorial cartoon. Monochrome ink illustration with ONLY Bitcoin orange (#E8740C) as accent color. Bold, confident black ink lines — NOT sketchy. Flat shadows in grey. Agent robots have boxy bodies, round screen-heads, orange glowing eyes. Humans are archetypal (tired dev, confused PM, overwhelmed reviewer). Clean background with generous negative space. Square 1:1 aspect ratio. ABSOLUTELY NO TEXT IN THE IMAGE — no speech bubbles, no labels, no words, no letters anywhere.
+  // Strip any text descriptions from the concept visual to prevent Gemini rendering text
+  const cleanVisual = concept.visual
+    .replace(/\b(reading|labeled|labelled|says?|showing|displays?|reads?)\s+["'][^"']*["']/gi, '')
+    .replace(/["'][A-Z][A-Z\s\d.!?:&—-]+["']/g, '')  // Remove ALL-CAPS quoted strings
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 
-SCENE: ${concept.visual}
+  const stylePrompt = `STYLE: Single-panel editorial cartoon in bold monochrome ink + ONE accent color.
+
+COLOR PALETTE (STRICT):
+- Black ink lines (bold, 2-3px weight, confident — NOT sketchy or thin)
+- White and grey fills (light grey, medium grey, dark grey for depth)
+- ONE accent color ONLY: Bitcoin orange (#E8740C)
+- Orange is used ONLY on: robot eyes (always) and at most ONE small prop (a mug, a warning light, a hard hat)
+- EVERYTHING ELSE is greyscale — screens, backgrounds, furniture, clothing, all greyscale
+- If you see more than 3 orange elements, remove some. Less orange = more impact.
+
+ROBOT CHARACTER DESIGN (CRITICAL — follow exactly):
+- HEAD: Round or rounded-rectangle SCREEN shape. The screen face is BLACK/DARK.
+- EYES: Two SMALL orange dots (#E8740C) on the dark screen — like LED indicators. NOT large ovals, NOT filling the screen.
+- The face is MOSTLY BLACK SCREEN with just the two small orange dots. This is the signature look.
+- NO other facial features — no mouth, no eyebrows, no nose, no pupils
+- BODY: Boxy rectangular torso — friendly appliance proportions, NOT sleek sci-fi
+- Emotion through BODY LANGUAGE only: slumped shoulders, raised arms, tilted head
+- All robots share the same design family
+
+SCENE: ${cleanVisual}
 
 COMPOSITION: ${concept.composition}
 
-MOOD: Editorial cartoon energy — like a New Yorker cartoon drawn with ink and a single orange accent.
+MOOD: Editorial cartoon energy — The New Yorker meets XKCD. Dry, understated, one visual gag.
 
-CRITICAL RULES:
-- NO text, labels, speech bubbles, or written words anywhere in the image
-- Maximum 3-4 characters
-- Leave ~12% blank space at the bottom for caption overlay
-- Bold confident lines, not sketchy
-- Only colors: black, white, grey, and Bitcoin orange (#E8740C)`;
+ABSOLUTE RULES:
+- ZERO text anywhere in the image — no words, letters, labels, signs, speech bubbles, banners, screen text
+- Monitors/screens show abstract lines suggesting code — NEVER readable text or error messages
+- Maximum 3 characters in the scene
+- Leave ~12% blank space at bottom edge for caption overlay
+- Square 1:1 aspect ratio
+- Bitcoin symbols: environmental only (small logo on a building), never focal, never glowing/on-fire`;
 
   console.log('Sending to Gemini (gemini-2.5-flash-image)...');
   console.log(`Prompt length: ${stylePrompt.length} chars`);
