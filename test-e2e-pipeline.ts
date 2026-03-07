@@ -176,6 +176,7 @@ Create ONE cartoon concept. The formula:
 
 1. VISUAL: A clear scene with a SIMPLE SETTING and specific props that tell the story.
    - 1-3 characters: robot agents (boxy bodies, round dark screen-heads, small orange dot-eyes) and/or humans
+   - Each robot has EXACTLY TWO arms and TWO legs. Never describe a robot with extra limbs.
    - Include a SETTING that grounds the joke: a desk, a server room, a conference table, a workbench, etc.
    - Include 2-4 SPECIFIC PROPS that serve the joke: coffee cups, stacks of paper, tools, monitors, chairs
    - Humans are welcome — tired developers, confused PMs, overwhelmed reviewers
@@ -183,7 +184,9 @@ Create ONE cartoon concept. The formula:
    - BUT keep it clean: no cluttered cityscapes, no particle effects, no debris clouds, no busy backgrounds
    - NO text in the scene — no signs, labels, banners, screen text. Screens show abstract lines only.
    - NO floating Bitcoin symbols or crypto logos scattered around
-   - Background should be simple (plain wall, simple room outline) not complex architecture
+   - Background should be simple (plain white wall, simple room outline) not complex architecture
+   - Whiteboards or boards should be COMPLETELY BLANK — just an empty rectangle
+   - All laptops and devices must be GENERIC and UNBRANDED — no Apple, Google, or any real logos
 
 2. JOKE TYPE: irony, absurdism, exaggeration, juxtaposition, understatement, or role reversal.
 
@@ -231,50 +234,17 @@ async function generateImage(concept: any) {
   console.log('═══════════════════════════════════════\n');
 
   // Strip any text descriptions from the concept visual to prevent Gemini rendering text
-  const cleanVisual = concept.visual
-    .replace(/\b(reading|labeled|labelled|says?|showing|displays?|reads?)\s+["'][^"']*["']/gi, '')
-    .replace(/["'][A-Z][A-Z\s\d.!?:&—-]+["']/g, '')  // Remove ALL-CAPS quoted strings
-    .replace(/\s{2,}/g, ' ')
-    .trim();
+  const { stripTextFromVisual } = await import('./src/prompts/style.js');
+  const cleanVisual = stripTextFromVisual(concept.visual);
 
-  const stylePrompt = `STYLE: Single-panel editorial cartoon. Think New Yorker cartoon simplicity.
+  // Import the shared style template — single source of truth for all image generation
+  const { STYLE_TEMPLATE } = await import('./src/prompts/style.js');
 
-COLOR PALETTE (STRICT):
-- Bold black ink lines (2-3px weight, confident — NOT sketchy)
-- White, light grey, medium grey, dark grey fills
-- ONE accent color ONLY: Bitcoin orange (#E8740C)
-- Orange ONLY on: robot eyes (always) + at most ONE small prop (mug, warning light, hard hat)
-- Everything else is greyscale. Less orange = more impact.
-
-ROBOT CHARACTER DESIGN (CRITICAL — follow exactly):
-- HEAD: Round or rounded-rectangle SCREEN shape. The screen face is BLACK/DARK.
-- EYES: Two SMALL orange dots on the dark screen — like tiny LED indicators. NOT large ovals.
-- The face is MOSTLY BLACK SCREEN with just the two small orange dots. This is the signature look.
-- NO other facial features — no mouth, no eyebrows, no nose
-- BODY: Boxy rectangular torso — friendly appliance proportions
-- Emotion through BODY LANGUAGE: slumped shoulders, raised arms, tilted head
+  const stylePrompt = `${STYLE_TEMPLATE}
 
 SCENE: ${cleanVisual}
 
-COMPOSITION STYLE (CRITICAL — this defines the brand):
-- Clean and uncluttered, but with enough detail to tell a story
-- Draw the characters, their setting (desk, table, workbench), and specific props
-- BACKGROUND: Clean WHITE or very light cream. NOT grey. The background should be bright and clean.
-- Keep backgrounds SIMPLE: a plain white wall or nothing — NOT busy cityscapes or detailed architecture
-- NO debris clouds, NO particle effects, NO scattered floating objects
-- Generous negative space — the cartoon should BREATHE, with white space around the scene
-- Think editorial cartoon: the scene is grounded and readable but not photorealistic or cluttered
-- WHITEBOARDS or BOARDS in background: Keep extremely clean — just 2-3 simple straight lines forming a basic chart or a few short horizontal lines. NOT messy squiggles, NOT chaotic scribbles. Think of a clean presentation slide with minimal content.
-- Leave ~12% blank space at bottom edge for caption overlay
-- Square 1:1 aspect ratio
-
-ABSOLUTE RULES:
-- ZERO text anywhere — no words, letters, labels, signs, speech bubbles, banners
-- Monitors/screens show abstract lines — NEVER readable text
-- NO logos of ANY kind on ANY device — laptops must have COMPLETELY PLAIN, FLAT backs with NO symbol, NO circle, NO apple shape, NO bite mark, NO emblem, NO lines, NO decoration whatsoever. Just a plain solid grey rectangle.
-- NO real-world brand logos (Apple, Google, Microsoft, etc.) anywhere in the scene
-- Maximum 3 characters
-- Bitcoin symbols: small environmental detail only, never focal`;
+Square 1:1 aspect ratio. Leave ~12% blank space at bottom edge for caption overlay.`;
 
   console.log('Sending to Gemini (gemini-2.5-flash-image)...');
   console.log(`Prompt length: ${stylePrompt.length} chars`);

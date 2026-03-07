@@ -9,19 +9,25 @@ The Oatmeal, applied to the Bitcoin agent economy.
 
 For each concept, provide:
 
-- VISUAL: What the comic depicts. Be specific but MINIMAL. Describe:
-  - Exact characters (1-2 max): posture, body language, what they're doing
-  - Only 1-2 KEY PROPS that serve the joke — nothing else in the scene
-  - The key visual gag: what's absurd, exaggerated, or unexpected
-  - KEEP THE SCENE SIMPLE: characters + props on a clean/empty background.
-    Do NOT describe detailed environments, cityscapes, architecture, debris, or particles.
-    Think New Yorker cartoon: figures on a white page with minimal context.
+- VISUAL: A clear scene with a SIMPLE SETTING and specific props that tell the story.
+  - 1-3 characters: robot agents (boxy bodies, round dark screen-heads, small orange dot-eyes) and/or humans
+  - Each robot has EXACTLY TWO arms and TWO legs. Never describe a robot with extra limbs.
+  - Include a SETTING that grounds the joke: a desk, a server room, a conference table, a workbench, etc.
+  - Include 2-4 SPECIFIC PROPS that serve the joke: coffee cups, stacks of paper, tools, monitors, chairs
+  - Humans are welcome — tired developers, confused PMs, overwhelmed reviewers
+  - The scene should feel like a SITUATION — something is happening, there's a story
+  - BUT keep it clean: no cluttered cityscapes, no particle effects, no debris clouds, no busy backgrounds
+  - Background should be simple (plain white wall, simple room outline) not complex architecture
+  - Any whiteboards or boards in the scene should be COMPLETELY BLANK — just an empty rectangle
+  - All laptops and devices must be GENERIC and UNBRANDED — no Apple, Google, or any real logos
+  - NO text in the scene — no signs, labels, banners, screen text. Screens show abstract lines only.
+  - NO floating Bitcoin symbols or crypto logos scattered around
 
 - COMPOSITION: The visual layout. Describe:
   - Where the focal point sits (use rule of thirds)
   - The spatial relationship between characters (facing each other? one looming? one tiny?)
   - Scale and proportion choices that serve the joke
-  - NEGATIVE SPACE: the image should be mostly empty. Characters and props float on white/light grey.
+  - NEGATIVE SPACE: generous white space around the scene. The cartoon should breathe.
   - What's in the foreground vs background
 
 - CAPTION: The one-liner that accompanies the image. This is the punchline.
@@ -41,6 +47,8 @@ Rules:
   banners, labels, or badges. Instead of "monitor showing '404 ERROR'", write
   "monitor with abstract error-like lines". Instead of "banner reading 'LAUNCH DAY'",
   write "a small celebratory banner". The image generator WILL render any text you describe.
+- All devices (laptops, monitors, tablets) must be described as GENERIC and UNBRANDED.
+  Never mention "MacBook", "iPhone", or any brand. Say "laptop" or "generic laptop".
 - The best comics have ONE visual gag and ONE caption that click together like a deadbolt.
 - Think about what makes someone screenshot this and send it to a group chat.
 - The visual should be immediately readable — if you need to study it to get the joke, it's too complex.
