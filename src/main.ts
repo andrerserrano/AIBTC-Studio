@@ -7,6 +7,7 @@ import { registerConsoleRoutes } from './console/stream.js'
 import { Cache } from './cache/cache.js'
 import { JsonStore } from './store/json-store.js'
 import { AIBTCScanner } from './pipeline/aibtc-scanner.js'
+import { BTCMagScanner } from './pipeline/btcmag-scanner.js'
 import { Scorer } from './pipeline/scorer.js'
 import { Ideator } from './pipeline/ideator.js'
 import { Generator } from './pipeline/generator.js'
@@ -67,8 +68,32 @@ async function main() {
   const worldview = new WorldviewStore(events, join(config.dataDir, 'worldview.json'))
   await worldview.init()
 
-  // --- Pipeline (AIBTC.news scanner replaces Twitter/Grok scanner) ---
-  const scanner = new AIBTCScanner(events, signalCache)
+  // --- Pipeline (dual-source: AIBTC.news + Bitcoin Magazine RSS) ---
+  const aibtcScanner = new AIBTCScanner(events, signalCache)
+  const btcMagScanner = config.btcMag.enabled ? new BTCMagScanner(events, signalCache) : null
+
+  // Combined scanner that merges signals from both sources
+  const scanner = {
+    async scan(): Promise<Signal[]> {
+      const results = await Promise.allSettled([
+        aibtcScanner.scan(),
+        btcMagScanner ? btcMagScanner.scan() : Promise.resolve([]),
+      ])
+
+      const signals: Signal[] = []
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          signals.push(...result.value)
+        }
+      }
+
+      return signals
+    },
+    get bufferSize(): number {
+      return aibtcScanner.bufferSize + (btcMagScanner?.bufferSize ?? 0)
+    },
+  }
+
   const scorer = new Scorer(events, evalCache)
   const ideator = new Ideator(events, worldview)
   const generator = new Generator(events, imageCache, readProvider)

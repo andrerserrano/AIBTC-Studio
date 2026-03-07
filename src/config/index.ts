@@ -28,6 +28,13 @@ export const config = {
     pollIntervalMs: testMode ? 30_000 : 5 * 60_000,  // 30s vs 5min
   },
 
+  // Bitcoin Magazine RSS
+  btcMag: {
+    feedUrl: process.env.BTCMAG_FEED_URL ?? 'https://bitcoinmagazine.com/feed',
+    maxArticles: Number(process.env.BTCMAG_MAX_ARTICLES ?? 30),
+    enabled: process.env.BTCMAG_ENABLED !== 'false',  // enabled by default
+  },
+
   // Agent loop
   tickIntervalMs: testMode ? 10_000 : 120_000,
   flagshipIntervalMs: testMode ? 30_000 : 6 * 3600_000,     // 30s vs 6h

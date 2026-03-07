@@ -1,8 +1,13 @@
 import { randomUUID } from 'crypto'
 import type { Cartoon, CartoonConcept, ConceptCritique, Post, Signal, Topic } from '../types.js'
 import { EventBus } from '../console/events.js'
-import { AIBTCScanner } from '../pipeline/aibtc-scanner.js'
 import { Scorer } from '../pipeline/scorer.js'
+
+/** Any object that can scan for signals — allows combining multiple scanners */
+interface SignalScanner {
+  scan(): Promise<Signal[]>
+  readonly bufferSize: number
+}
 import { Ideator } from '../pipeline/ideator.js'
 import { Generator } from '../pipeline/generator.js'
 import { Captioner } from '../pipeline/captioner.js'
@@ -55,7 +60,7 @@ export class AgentLoop {
 
   constructor(
     private events: EventBus,
-    private scanner: AIBTCScanner,
+    private scanner: SignalScanner,
     private scorer: Scorer,
     private ideator: Ideator,
     private generator: Generator,
@@ -82,7 +87,7 @@ export class AgentLoop {
       this.lastQuickhit = saved.lastQuickhit
       this.lastEngagement = saved.lastEngagement
       this.lastReflection = saved.lastReflection
-      this.events.monologue('Resumed from previous state. Scanning AIBTC.news for signals...')
+      this.events.monologue('Resumed from previous state. Scanning for signals...')
     } else {
       this.events.monologue("AIBTC.Studio is awake. Scanning the Bitcoin agent economy for stories worth telling.")
     }
@@ -106,7 +111,7 @@ export class AgentLoop {
   private async tick(): Promise<void> {
     const signals = await this.scanner.scan()
     if (signals.length === 0) {
-      this.events.monologue('No new signals from AIBTC.news. The agent economy is quiet.')
+      this.events.monologue('No new signals. The agent economy is quiet.')
     }
 
     const now = Date.now()

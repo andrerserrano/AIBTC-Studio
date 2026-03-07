@@ -9,9 +9,17 @@ export interface AIBTCMetadata {
   timestamp: string
 }
 
+export interface BTCMagMetadata {
+  title: string
+  link: string
+  pubDate: string
+  categories?: string[]
+  beat: string
+}
+
 export interface Signal {
   id: string
-  source: 'aibtc'
+  source: 'aibtc' | 'btcmag'
   type: 'headline' | 'post'
   content: string
   url: string
@@ -23,6 +31,7 @@ export interface Signal {
   ingestedAt: number
   expiresAt: number
   aibtc?: AIBTCMetadata
+  btcMag?: BTCMagMetadata
 }
 
 export interface TopicScores {
