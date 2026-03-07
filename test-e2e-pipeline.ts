@@ -259,7 +259,8 @@ SCENE: ${cleanVisual}
 COMPOSITION STYLE (CRITICAL — this defines the brand):
 - Clean and uncluttered, but with enough detail to tell a story
 - Draw the characters, their setting (desk, table, workbench), and specific props
-- Keep backgrounds SIMPLE: a plain wall, a simple room outline, a flat horizon — NOT busy cityscapes or detailed architecture
+- BACKGROUND: Clean WHITE or very light cream. NOT grey. The background should be bright and clean.
+- Keep backgrounds SIMPLE: a plain white wall or nothing — NOT busy cityscapes or detailed architecture
 - NO debris clouds, NO particle effects, NO scattered floating objects
 - Generous negative space — the cartoon should BREATHE, with white space around the scene
 - Think editorial cartoon: the scene is grounded and readable but not photorealistic or cluttered
@@ -269,6 +270,7 @@ COMPOSITION STYLE (CRITICAL — this defines the brand):
 ABSOLUTE RULES:
 - ZERO text anywhere — no words, letters, labels, signs, speech bubbles, banners
 - Monitors/screens show abstract lines — NEVER readable text
+- NO real-world brand logos (Apple, Google, Microsoft, etc.) — laptops and devices should be generic/unbranded
 - Maximum 3 characters
 - Bitcoin symbols: small environmental detail only, never focal`;
 
