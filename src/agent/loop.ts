@@ -146,15 +146,12 @@ export class AgentLoop {
     if (signals.length === 0) return
 
     const timeSinceFlagship = now - this.lastFlagship
-    const timeSinceQuickhit = now - this.lastQuickhit
-    const adaptiveCooldown = this.getAdaptiveCooldown()
 
     if (timeSinceFlagship >= config.flagshipIntervalMs) {
       await this.doFlagship(signals)
-    } else if (timeSinceQuickhit >= adaptiveCooldown) {
-      await this.doQuickhit(signals)
     } else {
-      await this.tickCooldown(signals, adaptiveCooldown - timeSinceQuickhit)
+      // Shortlist topics during cooldown so the next flagship can skip scoring
+      await this.tickCooldown(signals, config.flagshipIntervalMs - timeSinceFlagship)
     }
   }
 
