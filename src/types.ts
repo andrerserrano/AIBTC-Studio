@@ -17,9 +17,19 @@ export interface BTCMagMetadata {
   beat: string
 }
 
+export interface RSSMetadata {
+  feedKey: string
+  feedName: string
+  title: string
+  link: string
+  pubDate: string
+  categories?: string[]
+  beat: string
+}
+
 export interface Signal {
   id: string
-  source: 'aibtc' | 'btcmag'
+  source: 'aibtc' | 'btcmag' | 'rss'
   type: 'headline' | 'post'
   content: string
   url: string
@@ -32,6 +42,7 @@ export interface Signal {
   expiresAt: number
   aibtc?: AIBTCMetadata
   btcMag?: BTCMagMetadata
+  rss?: RSSMetadata
 }
 
 export interface TopicScores {

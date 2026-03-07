@@ -35,6 +35,24 @@ export const config = {
     enabled: process.env.BTCMAG_ENABLED !== 'false',  // enabled by default
   },
 
+  // Additional RSS feeds (CoinDesk, The Defiant, etc.)
+  rssFeeds: [
+    {
+      key: 'coindesk',
+      name: 'CoinDesk',
+      feedUrl: process.env.COINDESK_FEED_URL ?? 'https://www.coindesk.com/arc/outboundfeeds/rss/',
+      maxArticles: Number(process.env.COINDESK_MAX_ARTICLES ?? 30),
+      enabled: process.env.COINDESK_ENABLED !== 'false',
+    },
+    {
+      key: 'thedefiant',
+      name: 'The Defiant',
+      feedUrl: process.env.THEDEFIANT_FEED_URL ?? 'https://thedefiant.io/feed',
+      maxArticles: Number(process.env.THEDEFIANT_MAX_ARTICLES ?? 30),
+      enabled: process.env.THEDEFIANT_ENABLED !== 'false',
+    },
+  ],
+
   // Agent loop
   tickIntervalMs: testMode ? 10_000 : 120_000,
   flagshipIntervalMs: testMode ? 30_000 : 6 * 3600_000,     // 30s vs 6h

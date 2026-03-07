@@ -8,6 +8,7 @@ import { Cache } from './cache/cache.js'
 import { JsonStore } from './store/json-store.js'
 import { AIBTCScanner } from './pipeline/aibtc-scanner.js'
 import { BTCMagScanner } from './pipeline/btcmag-scanner.js'
+import { RSSScanner } from './pipeline/rss-scanner.js'
 import { Scorer } from './pipeline/scorer.js'
 import { Ideator } from './pipeline/ideator.js'
 import { Generator } from './pipeline/generator.js'
@@ -71,16 +72,26 @@ async function main() {
   const worldview = new WorldviewStore(events, join(config.dataDir, 'worldview.json'))
   await worldview.init()
 
-  // --- Pipeline (dual-source: AIBTC.news + Bitcoin Magazine RSS) ---
+  // --- Pipeline (multi-source: AIBTC.news + Bitcoin Magazine + CoinDesk + The Defiant) ---
   const aibtcScanner = new AIBTCScanner(events, signalCache)
   const btcMagScanner = config.btcMag.enabled ? new BTCMagScanner(events, signalCache) : null
 
-  // Combined scanner that merges signals from both sources
+  // Additional RSS feed scanners (CoinDesk, The Defiant, etc.)
+  const rssScanners = config.rssFeeds
+    .filter((feed) => feed.enabled)
+    .map((feed) => new RSSScanner(feed, events, signalCache))
+
+  if (rssScanners.length > 0) {
+    console.log(`[scanners] ${rssScanners.length} additional RSS feeds enabled: ${config.rssFeeds.filter(f => f.enabled).map(f => f.name).join(', ')}`)
+  }
+
+  // Combined scanner that merges signals from all sources
   const scanner = {
     async scan(): Promise<Signal[]> {
       const results = await Promise.allSettled([
         aibtcScanner.scan(),
         btcMagScanner ? btcMagScanner.scan() : Promise.resolve([]),
+        ...rssScanners.map((s) => s.scan()),
       ])
 
       const signals: Signal[] = []
@@ -93,7 +104,11 @@ async function main() {
       return signals
     },
     get bufferSize(): number {
-      return aibtcScanner.bufferSize + (btcMagScanner?.bufferSize ?? 0)
+      return (
+        aibtcScanner.bufferSize +
+        (btcMagScanner?.bufferSize ?? 0) +
+        rssScanners.reduce((sum, s) => sum + s.bufferSize, 0)
+      )
     },
   }
 
