@@ -766,7 +766,11 @@ function openDetail(idx) {
     html += '<span style="color:var(--color-ink-faint);">Inscription</span>';
     html += '<span style="word-break:break-all;">' + p.inscriptionId + '</span>';
     html += '<span style="color:var(--color-ink-faint);">Reveal Tx</span>';
-    html += '<a href="' + explorer + '/tx/' + p.revealTxid + '" target="_blank" rel="noopener" style="color:var(--color-bitcoin);text-decoration:none;word-break:break-all;">' + p.revealTxid.slice(0, 16) + '&hellip;' + p.revealTxid.slice(-8) + '</a>';
+    if (p.revealTxid) {
+      html += '<a href="' + explorer + '/tx/' + p.revealTxid + '" target="_blank" rel="noopener" style="color:var(--color-bitcoin);text-decoration:none;word-break:break-all;">' + p.revealTxid.slice(0, 16) + '&hellip;' + p.revealTxid.slice(-8) + '</a>';
+    } else {
+      html += '<span style="color:var(--color-ink-faint);font-style:italic;">Pending inscription</span>';
+    }
     html += '<span style="color:var(--color-ink-faint);">Network</span>';
     html += '<span style="text-transform:capitalize;">' + (p.network || 'mainnet') + '</span>';
     html += '<span style="color:var(--color-ink-faint);">Cost</span>';
