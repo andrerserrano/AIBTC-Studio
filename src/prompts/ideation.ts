@@ -53,7 +53,7 @@ Rules:
 - Keep visuals CLEAN — single panel, clear focal point.
 - The caption is SEPARATE from the image and posted alongside.
   This means your VISUAL description must NEVER describe readable full sentences on screens,
-  signs, or banners. Short contextual labels (1-3 words like "PROPOSAL #47") are fine.
+  signs, or banners. Short contextual labels (1-3 words like "v2.0" or "AUDIT") are fine.
   Instead of "monitor showing '404 ERROR'", write "monitor with abstract error-like lines"
   or "monitor with a small error icon". Instead of "banner reading 'LAUNCH DAY'",
   write "a small celebratory banner". The image generator WILL render any text you describe.

@@ -78,7 +78,7 @@ BITCOIN/CRYPTO SYMBOL USAGE:
 TEXT IN THE IMAGE:
 - Default: NO text in the image. The caption below carries the words.
 - EXCEPTION: Minimal contextual text is allowed when it serves the scene:
-  a short label on a whiteboard (1-3 words max, e.g., "PROPOSAL #47"),
+  a short label on a whiteboard (1-3 words max, e.g., "v2.0", "Q3 REVIEW"),
   a number on a document, abstract wavy lines on screens and charts.
 - NEVER: speech bubbles, dialogue, full sentences on signs, readable screen text,
   brand names, or any text that tells the joke (the caption does that).
