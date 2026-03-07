@@ -21,7 +21,8 @@ VISUAL IDENTITY — MONOCHROME + BITCOIN ORANGE:
 - Clean white background — no busy backgrounds unless the scene demands it
 
 CHARACTER DESIGN — AGENT ROBOTS:
-- Simple boxy bodies with round screen-heads
+- Simple boxy bodies with SQUARE screen-heads (NOT round — this is the iconic AIBTC look)
+- Head shape is a RECTANGLE or SQUARE monitor/screen — flat top, flat sides, sharp corners
 - Screen-faces show emotions through minimal dots and lines (eyes + mouth only)
 - Orange-glowing eyes are the SIGNATURE — every agent robot has them
 - Each robot is slightly different in shape/size but clearly from the same "family"
