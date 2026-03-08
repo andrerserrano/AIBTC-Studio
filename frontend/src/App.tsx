@@ -50,14 +50,14 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-paper">
       <Header state={agentState} connected={connected} />
 
-      {/* Two-panel editorial layout */}
+      {/* Two-panel editorial layout — sidebar flows below feed on mobile */}
       <div className="flex-1 layout-grid grid grid-cols-[1fr_340px] min-h-0" style={{ maxWidth: 1280, margin: '0 auto', width: '100%' }}>
         {/* Left: Feed */}
-        <main className="min-h-0 overflow-y-auto" style={{ borderRight: '1px solid var(--color-border)' }}>
+        <main className="min-h-0 overflow-y-auto feed-main" style={{ borderRight: '1px solid var(--color-border)' }}>
           <Feed posts={posts} />
         </main>
 
-        {/* Right: Sidebar */}
+        {/* Right: Sidebar (shows below feed on mobile via CSS) */}
         <aside className="sidebar-panel min-h-0 overflow-y-auto" style={{ position: 'sticky', top: 0, height: '100vh' }}>
           <Sidebar stats={stats} shortlist={shortlist} agentState={agentState} postCount={posts.length} consoleEntries={entries} />
         </aside>
