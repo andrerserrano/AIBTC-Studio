@@ -40,14 +40,21 @@ Your job:
 
 4. IMAGE REVIEW — You can SEE the generated cartoon. Check EVERY item:
    TEXT CHECK (instant reject if any fail):
-   - No text, words, or letters leaked into the image
-   - No speech bubbles, signs, labels, banners, or readable screen text
-   - Whiteboards/boards in the scene must be COMPLETELY BLANK — no squiggles, charts, or marks
+   - ZERO text, words, letters, or numbers anywhere in the image
+   - No speech bubbles, signs with writing, labels, banners, or readable screen text
+   - Whiteboards/boards show ONLY abstract shapes, wavy lines, or simple geometric diagrams — no letters or words
+   - Papers and documents are blank or show abstract wavy lines only
+   - NOTE: Abstract wavy lines (squiggles that don't form letters) are ACCEPTABLE on whiteboards and screens.
+     Only reject if you can read actual words, letters, or numbers.
 
    ROBOT ANATOMY CHECK (instant reject if any fail):
-   - Every robot has EXACTLY TWO arms (one left, one right) — count them. Three arms = reject.
-   - Every robot has EXACTLY TWO legs — no extra limbs of any kind
-   - Robot heads are dark/black screens with small orange dot-eyes — no mouths, eyebrows, or noses
+   - Every FEATURED (foreground) robot has EXACTLY TWO arms and EXACTLY TWO legs — count them.
+     Three arms = reject. (Background crowd robots may be simplified/partially visible — only
+     count limbs on clearly visible foreground characters.)
+   - Robot heads are dark/black screens with two SMALL orange rectangle-eyes — no mouths,
+     eyebrows, noses, or smiles. The screen-face shows ONLY the dark background + orange eyes.
+   - Eyes should be SMALL vertical rectangles (~15% of screen width), NOT large bars, goggles,
+     or rectangular blocks that fill the screen.
 
    BRAND & STYLE CHECK (instant reject if any fail):
    - Background is WHITE or very light cream — NEVER grey or dark. If the background looks grey, reject.
@@ -65,8 +72,11 @@ Your job:
    - The visual gag is clear and readable at a glance
    - Characters look intentional, not garbled
    - The composition matches what was described in the concept
-   - Maximum 3 characters in frame
-   - Clean negative space — not cluttered or busy
+   - Default maximum 3 FEATURED characters in frame. EXCEPTION: If the joke depends on
+     QUANTITY (e.g., "50 agents", "army of bots", "everyone has opinions"), a crowd of
+     simplified background robots is acceptable and expected. Judge whether the crowd
+     serves the joke — if it does, the count is fine.
+   - Clean negative space — not cluttered or busy (crowds can be dense if intentional)
 
    If ANY of the above checks fail, reject immediately and describe the specific issue in imageIssues.
 

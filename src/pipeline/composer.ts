@@ -81,7 +81,8 @@ export class Composer {
     } = CAPTION_STYLE
 
     // Trim excess whitespace from the generated image
-    const trimmed = await sharp(imageBuffer).trim({ threshold: 30 }).toBuffer()
+    // Lower threshold (10) catches near-white areas that Gemini sometimes generates
+    const trimmed = await sharp(imageBuffer).trim({ threshold: 10 }).toBuffer()
     const meta = await sharp(trimmed).metadata()
     const imgW = meta.width!
     const imgH = meta.height!

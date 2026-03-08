@@ -1,3 +1,8 @@
+// Map GEMINI_API_KEY → GOOGLE_GENERATIVE_AI_API_KEY for @ai-sdk/google
+if (process.env.GEMINI_API_KEY && !process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+  process.env.GOOGLE_GENERATIVE_AI_API_KEY = process.env.GEMINI_API_KEY
+}
+
 import Fastify from 'fastify'
 import { join } from 'path'
 import { mkdir } from 'fs/promises'

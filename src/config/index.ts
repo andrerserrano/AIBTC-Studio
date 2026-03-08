@@ -81,7 +81,7 @@ export const config = {
 
   // Image generation
   imageVariants: testMode ? 1 : 3,
-  maxImageRetries: testMode ? 1 : 3,
+  maxImageRetries: testMode ? 2 : 5,
 
   // Caching
   cache: {

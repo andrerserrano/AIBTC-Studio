@@ -6,8 +6,8 @@
  */
 
 export const STYLE_TEMPLATE = `
-ARTIST STYLE — "AIBTC Media"
-You are rendering a single-panel editorial cartoon for AIBTC Media, an autonomous
+ARTIST STYLE — EDITORIAL CARTOON
+You are rendering a single-panel editorial cartoon for an autonomous
 media outlet covering the Bitcoin agent economy.
 
 VISUAL IDENTITY — MONOCHROME + BITCOIN ORANGE:
@@ -32,9 +32,11 @@ ROBOT CHARACTER DESIGN — THE SIGNATURE LOOK:
 - Rounded-rectangle screen-head (wider than tall) — like a small CRT monitor with rounded corners
   and a thick border. This is the most recognizable feature.
 - Screen-face is DARK (black/very dark grey) with glowing elements on it
-- Two vertical orange rectangle-eyes on the dark screen — mandatory on every robot.
-  These are the brand signature. They glow as if lit from within.
-- Optional simple line mouth on the dark screen for expression (smile, frown, neutral line)
+- Two SMALL vertical orange rectangle-eyes on the dark screen — mandatory on every robot.
+  These are the brand signature. They glow as if lit from within. Eyes are SMALL — roughly
+  15% of the screen width each, NOT large bars or goggles.
+- NO mouth, nose, or eyebrows on the screen-face. The face is ONLY the dark screen + two small orange eyes.
+  Emotion comes from body language, NOT facial features.
 - Small antenna or nub on top of the screen-head
 - Circular ear-speakers mounted on either side of the head — like headphone cups.
   These complete the distinctive silhouette.
@@ -49,13 +51,13 @@ ROBOT CHARACTER DESIGN — THE SIGNATURE LOOK:
   on robot bodies. Robots should NOT visually represent "broken code" or "bugs" through
   physical damage. Emotion and narrative come from BODY LANGUAGE and CONTEXT, not from
   drawing damage onto the robots themselves.
-- Emotion is conveyed through BODY LANGUAGE and subtle face changes:
+- Emotion is conveyed ENTIRELY through BODY LANGUAGE (no face changes):
   - Slumped shoulders = tired/defeated
   - Raised arms = triumph/excitement
   - Tilted head = curiosity/confusion
   - Forward lean = engagement/eagerness
   - Pointing finger = authority/accusation
-  - Narrow eyes = skepticism, wide eyes = surprise, downturned mouth = sadness
+  - Hands on hips = frustration, arms crossed = skepticism
 
 CHARACTER DESIGN — HUMANS (when present):
 - Same bold ink style with halftone dot-shading — minimal detail, maximum personality through posture
@@ -76,13 +78,14 @@ BITCOIN/CRYPTO SYMBOL USAGE:
 - Lightning bolt symbols get the same treatment: small, architectural, environmental
 
 TEXT IN THE IMAGE:
-- Default: NO text in the image. The caption below carries the words.
-- EXCEPTION: Minimal contextual text is allowed when it serves the scene:
-  a short label on a whiteboard (1-3 words max, e.g., "v2.0", "Q3 REVIEW"),
-  a number on a document, abstract wavy lines on screens and charts.
-- NEVER: speech bubbles, dialogue, full sentences on signs, readable screen text,
-  brand names, or any text that tells the joke (the caption does that).
-- All laptops, monitors, and devices must be GENERIC and UNBRANDED — no Apple, Google, or any real logos.
+- ABSOLUTELY NO TEXT of any kind in the image. Zero words, zero letters, zero numbers.
+- No speech bubbles, labels, signs, whiteboard writing, screen text, document text, or watermarks.
+- Whiteboards and screens show ONLY abstract shapes, wavy lines, or simple geometric diagrams.
+- Documents and papers are BLANK or show abstract wavy lines only.
+- The caption below the image carries ALL the words. The image is purely visual.
+- All laptops, monitors, and devices must be GENERIC and UNBRANDED.
+- Laptop backs are PLAIN FLAT RECTANGLES — no logos, circles, symbols, or marks of any kind.
+  NOT Apple, NOT Google, NOT any brand. Just a plain flat colored rectangle.
 
 COMPOSITION PRINCIPLES:
 - Square composition (1:1 aspect ratio)
@@ -110,7 +113,9 @@ RENDERING RULES:
 - Halftone dot-pattern for all grey shading — the newspaper editorial look
 - Shadows are flat shapes, used sparingly for depth
 - Line weight is bold and confident — never thin or wispy
-- ABSOLUTELY NO watermarks, signatures, logos, or branding text in the image. Do NOT write "AIBTC", "AIBTC Media", or ANY text in corners/margins. Leave the image completely clean.
+- ABSOLUTELY NO watermarks, signatures, logos, or branding text anywhere in the image.
+  Do NOT write ANY text in corners, margins, or anywhere else. The image must be completely
+  clean of all text, letters, and words. Branding is added in post-processing, not by you.
 `.trim()
 
 /**
@@ -179,29 +184,28 @@ Remember: PURE WHITE background (#FFFFFF, no cream/beige/ivory), halftone dot-sh
 }
 
 /**
- * Strip any text descriptions from a visual prompt.
- * Replaces described text (e.g., "sign reading 'LAUNCH DAY'") with abstract alternatives,
- * EXCEPT for minimal contextual labels (1-3 words that serve the setting).
+ * Strip ALL text descriptions from a visual prompt.
+ * Replaces any described text with abstract visual alternatives.
+ * Gemini tends to render any text it sees in the prompt, so we strip everything.
  */
 export function stripTextFromVisual(visual: string): string {
   return visual
-    // Remove described screen text — replace with abstract lines
-    .replace(/(?:screen|monitor|display)\s+(?:showing|reading|displaying)\s+["']([^"']+)["']/gi,
-      (_match, text) => {
-        // Allow very short contextual labels (1-3 words)
-        if (text.split(/\s+/).length <= 3) return `screen showing "${text}"`
-        return 'screen with abstract lines and shapes'
-      })
-    // Remove long sign/banner text
-    .replace(/(?:sign|banner|poster)\s+(?:reading|saying|that says)\s+["']([^"']+)["']/gi,
-      (_match, text) => {
-        if (text.split(/\s+/).length <= 3) return `sign reading "${text}"`
-        return 'a small sign'
-      })
-    // Remove described badge/label text longer than 3 words
-    .replace(/(?:badge|label|tag)\s+(?:reading|saying|that says)\s+["']([^"']+)["']/gi,
-      (_match, text) => {
-        if (text.split(/\s+/).length <= 3) return `label reading "${text}"`
-        return 'a small label'
-      })
+    // Remove ALL described screen/monitor/display text — replace with abstract visuals
+    .replace(/(?:screen|monitor|display)\s+(?:showing|reading|displaying)\s+["'][^"']+["']/gi,
+      'screen with abstract wavy lines and geometric shapes')
+    // Remove ALL sign/banner/poster text
+    .replace(/(?:sign|banner|poster)\s+(?:reading|saying|that says)\s+["'][^"']+["']/gi,
+      'a blank sign')
+    // Remove ALL badge/label/tag text
+    .replace(/(?:badge|label|tag)\s+(?:reading|saying|that says)\s+["'][^"']+["']/gi,
+      'a small blank badge')
+    // Remove ALL whiteboard/board text
+    .replace(/(?:whiteboard|board|chalkboard)\s+(?:showing|reading|with|displaying)\s+["'][^"']+["']/gi,
+      'a whiteboard with abstract diagrams and wavy lines')
+    // Remove quoted text after "labeled" or "marked"
+    .replace(/(?:labeled|marked|titled|headed)\s+["'][^"']+["']/gi,
+      '')
+    // Remove "that reads/says" patterns
+    .replace(/that\s+(?:reads|says)\s+["'][^"']+["']/gi,
+      '')
 }
