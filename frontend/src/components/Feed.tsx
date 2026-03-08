@@ -269,7 +269,7 @@ function PostDetail({
   )
 }
 
-export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; streamMode?: boolean }) {
+export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[]; streamMode?: boolean; onAbout?: () => void }) {
   const [rejected, setRejected] = useState<RejectedCartoon[]>([])
   const [showRejected, setShowRejected] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('feed')
@@ -359,6 +359,15 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
             >
               Grid
             </button>
+            {onAbout && (
+              <button
+                onClick={onAbout}
+                className="btn mobile-about-btn"
+                style={{ display: 'none' }}
+              >
+                About
+              </button>
+            )}
             {rejected.length > 0 && (
               <button
                 onClick={() => setShowRejected(!showRejected)}
