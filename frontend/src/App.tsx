@@ -35,7 +35,7 @@ export default function App() {
       <div className="h-screen flex flex-col bg-paper">
         <Header state={agentState} connected={connected} />
 
-        <div className="flex-1 grid grid-cols-[1fr_1fr_360px] min-h-0">
+        <div className="flex-1 grid grid-cols-[1fr_1fr_400px] min-h-0">
           {/* The Brain */}
           <div className="min-h-0 overflow-hidden border-r-[2px] border-ink">
             <div className="sticky top-0 z-10 glass-panel border-b-[2px] border-ink px-4 py-2">
@@ -112,8 +112,8 @@ export default function App() {
       {/* Main content area */}
       <div className={`flex-1 layout-grid grid min-h-0 ${
         compareMode && tab === 'console'
-          ? 'grid-cols-[1fr_1fr_360px]'
-          : 'grid-cols-[1fr_360px]'
+          ? 'grid-cols-[1fr_1fr_400px]'
+          : 'grid-cols-[1fr_400px]'
       }`}>
         <main className="min-h-0 overflow-hidden border-r-[2px] border-ink">
           {tab === 'console' && <Monologue entries={entries} compareMode={compareMode} onToggleCompare={() => setCompareMode(!compareMode)} />}
