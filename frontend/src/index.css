@@ -416,21 +416,20 @@ button, [role="button"] {
   font-size: 10px;
 }
 
-/* Sidebar on mobile: show below feed as stacked column */
+/* Sidebar on mobile: hide; shown via About overlay instead */
 @media (max-width: 900px) {
   .layout-grid {
     grid-template-columns: 1fr !important;
-    display: flex !important;
-    flex-direction: column !important;
   }
   .sidebar-panel {
-    position: static !important;
-    height: auto !important;
-    border-top: 2px solid var(--color-border);
-    border-right: none !important;
+    display: none;
   }
   .feed-main {
     border-right: none !important;
+  }
+  /* Show the mobile About button */
+  .mobile-about-btn {
+    display: inline-flex !important;
   }
 
   /* Header: shrink title + break "AIBTC" / "Media" onto two lines */
