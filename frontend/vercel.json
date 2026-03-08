@@ -15,11 +15,11 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/:path*", "destination": "${BACKEND_URL}/api/:path*" },
-    { "source": "/images/:path*", "destination": "${BACKEND_URL}/images/:path*" },
-    { "source": "/voice/:path*", "destination": "${BACKEND_URL}/voice/:path*" },
-    { "source": "/bid-images/:path*", "destination": "${BACKEND_URL}/bid-images/:path*" },
-    { "source": "/videos/:path*", "destination": "${BACKEND_URL}/videos/:path*" },
+    { "source": "/api/:path*", "destination": "https://aibtc-media-production.up.railway.app/api/:path*" },
+    { "source": "/images/:path*", "destination": "https://aibtc-media-production.up.railway.app/images/:path*" },
+    { "source": "/voice/:path*", "destination": "https://aibtc-media-production.up.railway.app/voice/:path*" },
+    { "source": "/bid-images/:path*", "destination": "https://aibtc-media-production.up.railway.app/bid-images/:path*" },
+    { "source": "/videos/:path*", "destination": "https://aibtc-media-production.up.railway.app/videos/:path*" },
     { "source": "/legal", "destination": "/index.html" }
   ]
 }
