@@ -43,27 +43,27 @@ export function Header({ state, connected }: HeaderProps) {
       <div className="accent-rule" />
 
       <header style={{ background: 'var(--color-paper-bright)', borderBottom: '1px solid var(--color-border)' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '1.25rem 2rem 0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div className="header-inner" style={{ maxWidth: 1280, margin: '0 auto', padding: '1.25rem 2rem 0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
           {/* Left: Title + subtitle */}
-          <div>
+          <div style={{ minWidth: 0 }}>
             <h1
-              className="font-editorial"
+              className="font-editorial header-title"
               style={{
-                fontSize: 44,
                 fontWeight: 'bold',
                 color: 'var(--color-ink)',
-                lineHeight: 1,
+                lineHeight: 1.05,
                 letterSpacing: '-0.02em',
                 cursor: 'pointer',
                 textShadow: '2px 2px 0 rgba(26,26,26,0.06), -1px -1px 0 rgba(250,246,235,0.4)',
               }}
             >
-              {splitToLetters('AIBTC Media')}
+              {splitToLetters('AIBTC')}
+              <br className="header-title-break" />
+              {splitToLetters(' Media')}
             </h1>
-            <p style={{
+            <p className="header-subtitle" style={{
               marginTop: 3,
               fontFamily: 'var(--font-mono)',
-              fontSize: 10,
               fontWeight: 500,
               color: 'var(--color-ink-muted)',
               textTransform: 'uppercase',
