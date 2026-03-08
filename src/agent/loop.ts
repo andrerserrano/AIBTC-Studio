@@ -145,6 +145,29 @@ export class AgentLoop {
     // Content decisions
     if (signals.length === 0) return
 
+    // --- Scheduled posting (8am/8pm by default) ---
+    if (config.schedule.enabled) {
+      const timeSinceLastPost = now - Math.max(this.lastFlagship, this.lastQuickhit)
+      const scheduleState = this.getScheduleState()
+
+      if (scheduleState.shouldPost && timeSinceLastPost >= config.schedule.minCooldownMs) {
+        this.events.monologue(`Scheduled post time: ${scheduleState.currentHour}:00 ${config.schedule.timezone}. Creating flagship cartoon...`)
+        await this.doFlagship(signals)
+      } else if (scheduleState.minutesUntilNext <= 60) {
+        // Pre-shortlist topics as we approach the posting window
+        await this.tickCooldown(signals, scheduleState.minutesUntilNext * 60_000)
+      } else {
+        // Quiet period — just log occasionally
+        if (Math.random() < 0.02) { // ~1 in 50 ticks to avoid spam
+          this.events.monologue(
+            `Next scheduled post in ~${scheduleState.minutesUntilNext}min (${scheduleState.nextHour}:00 ${config.schedule.timezone}). Scanning...`
+          )
+        }
+      }
+      return
+    }
+
+    // --- Fallback: interval-based posting (test mode or schedule disabled) ---
     const timeSinceFlagship = now - this.lastFlagship
 
     if (timeSinceFlagship >= config.flagshipIntervalMs) {
@@ -153,6 +176,52 @@ export class AgentLoop {
       // Shortlist topics during cooldown so the next flagship can skip scoring
       await this.tickCooldown(signals, config.flagshipIntervalMs - timeSinceFlagship)
     }
+  }
+
+  // --- Schedule helpers ---
+
+  private getScheduleState(): { shouldPost: boolean; currentHour: number; nextHour: number; minutesUntilNext: number } {
+    const { postingHours, timezone, windowMinutes } = config.schedule
+
+    // Get current time in the configured timezone
+    const nowStr = new Date().toLocaleString('en-US', { timeZone: timezone })
+    const localNow = new Date(nowStr)
+    const currentHour = localNow.getHours()
+    const currentMinute = localNow.getMinutes()
+    const currentTotalMinutes = currentHour * 60 + currentMinute
+
+    // Check if we're within the posting window of any target hour
+    let shouldPost = false
+    for (const hour of postingHours) {
+      const targetMinutes = hour * 60
+      const diff = Math.abs(currentTotalMinutes - targetMinutes)
+      if (diff <= windowMinutes) {
+        shouldPost = true
+        break
+      }
+    }
+
+    // Find next posting hour
+    const sortedHours = [...postingHours].sort((a, b) => a - b)
+    let nextHour = sortedHours[0] // default to first hour tomorrow
+    let minutesUntilNext = (nextHour + 24) * 60 - currentTotalMinutes
+
+    for (const hour of sortedHours) {
+      const targetMinutes = hour * 60
+      if (targetMinutes > currentTotalMinutes + windowMinutes) {
+        nextHour = hour
+        minutesUntilNext = targetMinutes - currentTotalMinutes
+        break
+      }
+    }
+
+    // If all hours today have passed, next is first hour tomorrow
+    if (minutesUntilNext < 0 || minutesUntilNext > 24 * 60) {
+      minutesUntilNext = (sortedHours[0] + 24) * 60 - currentTotalMinutes
+      nextHour = sortedHours[0]
+    }
+
+    return { shouldPost, currentHour, nextHour, minutesUntilNext }
   }
 
   // --- Cooldown: shortlist topics so the post phase can skip scoring ---

@@ -19,6 +19,11 @@ for (const line of readFileSync('.env', 'utf8').split('\n')) {
 }
 
 import { config } from './src/config/index.js';
+import { join } from 'path';
+import { mkdirSync } from 'fs'
+
+// Ensure data directory exists
+mkdirSync(config.dataDir, { recursive: true });
 
 // Step 1: Scan AIBTC News + Bitcoin Magazine
 console.log('\n═══════════════════════════════════════');
@@ -269,9 +274,9 @@ Square 1:1 aspect ratio. Leave ~12% blank space at bottom edge for caption overl
     for (const candidate of candidates) {
       for (const part of candidate.content?.parts || []) {
         if (part.inlineData?.mimeType?.startsWith('image/')) {
-          imagePath = '/sessions/laughing-trusting-shannon/repo/.data/cartoon-test.png';
-          const { mkdirSync, writeFileSync } = await import('fs');
-          mkdirSync('/sessions/laughing-trusting-shannon/repo/.data', { recursive: true });
+          imagePath = join(config.dataDir, 'cartoon-test.png');
+          const { mkdirSync: mkdirS, writeFileSync } = await import('fs');
+          mkdirS(config.dataDir, { recursive: true });
           writeFileSync(imagePath, Buffer.from(part.inlineData.data, 'base64'));
           console.log(`✅ Image saved: ${imagePath} (${part.inlineData.data.length} base64 chars)`);
         }
@@ -353,7 +358,7 @@ async function composeCartoon(imagePath: string, concept: any) {
     </svg>
   `);
 
-  const composedPath = '/sessions/laughing-trusting-shannon/repo/.data/cartoon-composed.png';
+  const composedPath = join(config.dataDir, 'cartoon-composed.png');
 
   await sharp(imagePath)
     .resize(w, h - captionHeight, { fit: 'cover', position: 'top' })
@@ -388,7 +393,7 @@ async function inscribe(imagePath: string) {
 
     // Compress for inscription
     const sharp = (await import('sharp')).default;
-    const compressedPath = '/sessions/laughing-trusting-shannon/repo/.data/cartoon-compressed.webp';
+    const compressedPath = join(config.dataDir, 'cartoon-compressed.webp');
 
     await sharp(imagePath)
       .resize(200, 200, { fit: 'inside' })
@@ -500,7 +505,7 @@ async function prepareCardData(imagePath: string, concept: any, provenance: any)
   };
 
   // Save card data as JSON for later use
-  writeFileSync('/sessions/laughing-trusting-shannon/repo/.data/card-4-data.json', JSON.stringify(cardData, null, 2));
+  writeFileSync(join(config.dataDir, 'card-4-data.json'), JSON.stringify(cardData, null, 2));
   console.log(`✅ Card data saved: .data/card-4-data.json`);
   console.log(`   Title: ${cardData.title}`);
   console.log(`   Caption: ${cardData.caption}`);

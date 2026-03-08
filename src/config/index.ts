@@ -55,8 +55,17 @@ export const config = {
 
   // Agent loop
   tickIntervalMs: testMode ? 10_000 : 120_000,
-  flagshipIntervalMs: testMode ? 30_000 : 12 * 3600_000,    // 30s vs 12h (2x/day)
+  flagshipIntervalMs: testMode ? 30_000 : 6 * 3600_000,     // 30s vs 6h (minimum cooldown between posts)
   quickhitCooldownMs: testMode ? 15_000 : 3600_000,          // 15s vs 1h
+
+  // Scheduled posting: target specific hours of the day (24h format)
+  schedule: {
+    enabled: !testMode,
+    postingHours: (process.env.POSTING_HOURS ?? '8,20').split(',').map(Number),  // 8am and 8pm
+    timezone: process.env.POSTING_TIMEZONE ?? 'America/New_York',
+    windowMinutes: 30,   // Fire within ±30 min of target hour
+    minCooldownMs: testMode ? 30_000 : 4 * 3600_000,  // Minimum 4h between posts to prevent doubles
+  },
 
   // Adaptive posting: starts fast, slows exponentially per post
   posting: {
