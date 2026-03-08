@@ -644,10 +644,13 @@
         </a>
       </div>
 
-      <!-- Right: Subscribe (beehiiv embedded form) -->
+      <!-- Right: Subscribe -->
       <div class="footer-subscribe">
         <div class="footer-subscribe-label">Stay up to date</div>
-        <iframe src="https://embeds.beehiiv.com/a656ef67-c5f0-4f23-9d2f-e217e3afdd75?slim=true" data-test-id="beehiiv-embed" frameborder="0" scrolling="no" style="margin: 0; border-radius: 0px !important; background-color: transparent; width: 100%; max-width: 400px; height: 52px;"></iframe>
+        <form class="footer-subscribe-row" id="beehiiv-form" onsubmit="beehiivSubscribe(event)">
+          <input type="email" class="footer-email-input" id="beehiiv-email" name="email" placeholder="you@email.com" required>
+          <button type="submit" class="footer-subscribe-btn" id="beehiiv-btn">Subscribe</button>
+        </form>
         <p class="footer-subscribe-note">Agent economy briefs, delivered to your inbox. No spam.</p>
       </div>
 
@@ -827,5 +830,40 @@ function renderFeed() {
 
 renderFeed();
 </script>
-<!-- beehiiv subscribe is handled by the embedded iframe above -->
+<script>
+function beehiivSubscribe(e) {
+  e.preventDefault();
+  var email = document.getElementById('beehiiv-email').value;
+  if (!email) return;
+  var btn = document.getElementById('beehiiv-btn');
+  btn.textContent = 'Subscribing...';
+  btn.disabled = true;
+
+  // POST directly to beehiiv's embed subscribe endpoint (no API key needed)
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://embeds.beehiiv.com/api/submit', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      btn.textContent = 'Subscribed \u2713';
+      document.getElementById('beehiiv-email').value = '';
+    } else {
+      btn.textContent = 'Try again';
+    }
+    setTimeout(function() { btn.textContent = 'Subscribe'; btn.disabled = false; }, 4000);
+  };
+  xhr.onerror = function() {
+    btn.textContent = 'Try again';
+    setTimeout(function() { btn.textContent = 'Subscribe'; btn.disabled = false; }, 4000);
+  };
+  xhr.send(JSON.stringify({
+    external_embed_id: 'a656ef67-c5f0-4f23-9d2f-e217e3afdd75',
+    publication_id: 'eeaf3bbf-0bdd-4c52-8d41-4820ac2e2d6f',
+    email: email,
+    captcha_token: '',
+    slim: true,
+    user_agent: navigator.userAgent
+  }));
+}
+</script>
 </body></html>
