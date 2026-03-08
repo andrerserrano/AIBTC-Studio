@@ -162,11 +162,11 @@ export function Feed({ posts, streamMode = false }: { posts: LocalPost[]; stream
                     style={{ animationDelay: `${i * 0.03}s`, animationFillMode: 'backwards' }}
                     onClick={() => handleImageClick(post, () => setLightboxIndex(i))}
                   >
-                    <div className="relative aspect-square overflow-hidden">
+                    <div className="relative overflow-hidden bg-paper">
                       <img
                         src={sanitizeImagePath(post.imagePath)}
                         alt="cartoon"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
                       {post.videoPath && (
