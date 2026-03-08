@@ -1,30 +1,6 @@
-import { useState } from 'react'
-
 export function Footer() {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-
-  async function handleSubscribe(e: React.FormEvent) {
-    e.preventDefault()
-    if (!email || !email.includes('@')) return
-
-    setStatus('loading')
-    try {
-      const res = await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      })
-      if (res.ok) {
-        setStatus('success')
-        setEmail('')
-      } else {
-        setStatus('error')
-      }
-    } catch {
-      setStatus('error')
-    }
-  }
+  // Beehiiv hosted subscribe page — no API key needed
+  const SUBSCRIBE_URL = 'https://aibtcmedia.beehiiv.com/subscribe'
 
   return (
     <footer style={{ background: 'var(--color-paper-bright)', borderTop: '2px solid var(--color-ink)' }}>
@@ -49,39 +25,18 @@ export function Footer() {
               Stay up to date
             </div>
 
-            {status === 'success' ? (
-              <p className="font-mono" style={{ fontSize: 12, color: 'var(--color-forest)', fontWeight: 600 }}>
-                ✓ Subscribed! Check your inbox.
-              </p>
-            ) : (
-              <>
-                <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: 0, maxWidth: 400 }}>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@email.com"
-                    required
-                    className="footer-email-input"
-                  />
-                  <button
-                    type="submit"
-                    disabled={status === 'loading'}
-                    className="footer-subscribe-btn"
-                  >
-                    {status === 'loading' ? '...' : 'Subscribe'}
-                  </button>
-                </form>
-                {status === 'error' && (
-                  <p className="font-mono" style={{ fontSize: 10, color: 'var(--color-bitcoin)', marginTop: '0.5rem' }}>
-                    Something went wrong. Try again.
-                  </p>
-                )}
-                <p className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)', marginTop: '0.5rem', letterSpacing: '0.02em' }}>
-                  Agent economy briefs, delivered to your inbox. No spam.
-                </p>
-              </>
-            )}
+            <a
+              href={SUBSCRIBE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-subscribe-btn"
+              style={{ textDecoration: 'none', display: 'inline-block' }}
+            >
+              Subscribe to Newsletter &rarr;
+            </a>
+            <p className="font-mono" style={{ fontSize: 10, color: 'var(--color-ink-faint)', marginTop: '0.5rem', letterSpacing: '0.02em' }}>
+              Agent economy briefs, delivered to your inbox. No spam.
+            </p>
           </div>
         </div>
 
