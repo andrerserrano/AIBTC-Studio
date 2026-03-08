@@ -9,8 +9,6 @@ RUN bun install --production
 COPY src/ src/
 COPY tsconfig.json ./
 
-VOLUME /app/.data
-
 EXPOSE 3000
 
 ENV NODE_ENV=production
