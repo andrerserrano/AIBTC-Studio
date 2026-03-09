@@ -128,12 +128,29 @@ export class EngagementLoop {
       return
     }
 
+    // Filter out AIBTC_Media's own tweets (don't reply to yourself)
+    const selfUsername = config.twitter.username.toLowerCase()
+    const eligibleMentions = newMentions.filter(m => {
+      if (m.authorUsername.toLowerCase() === selfUsername) {
+        this.events.monologue(`Skipping own tweet from @${m.authorUsername}.`)
+        return false
+      }
+      return true
+    })
+
+    if (eligibleMentions.length === 0) {
+      this.events.monologue('No eligible mentions to respond to.')
+      const allProcessedIds = [...savedState.repliedTo, ...newMentions.map(m => m.id)].slice(-500)
+      await this.engagementState.write({ lastCheckTimestamp: this.lastCheckTimestamp!, repliedTo: allProcessedIds })
+      return
+    }
+
     this.events.monologue(
-      `${newMentions.length} new mentions. Let me see if any are worth responding to...`,
+      `${eligibleMentions.length} mentions to evaluate...`,
     )
 
-    const spammers = newMentions.filter((m) => this.isSpam(m))
-    const filtered = newMentions.filter((m) => !this.isSpam(m))
+    const spammers = eligibleMentions.filter((m) => this.isSpam(m))
+    const filtered = eligibleMentions.filter((m) => !this.isSpam(m))
     if (spammers.length > 0) {
       this.events.monologue(`Blocking ${spammers.length} spam accounts.`)
       for (const spammer of spammers) {
@@ -146,15 +163,18 @@ export class EngagementLoop {
       }
     }
 
-    // Pre-filter obvious low-effort with heuristics
+    // Pre-filter obvious low-effort with heuristics (threshold lowered for growth phase)
     const candidates = filtered.filter(m => {
       const score = this.scoreMention(m)
-      if (score < 3) {
+      if (score < 2) {
         this.events.monologue(
           `"${m.text.slice(0, 50)}..." by @${m.authorUsername} — not worth engaging (score ${score}). Skipping.`,
         )
         return false
       }
+      this.events.monologue(
+        `"${m.text.slice(0, 50)}..." by @${m.authorUsername} — potential candidate (score ${score}). Passing to LLM.`,
+      )
       return true
     })
 
@@ -177,8 +197,8 @@ export class EngagementLoop {
       const { object: decisions } = await generateObject({
         model: anthropic('claude-sonnet-4-6'),
         schema: replyDecisionSchema,
-        system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${ENGAGEMENT_SYSTEM}\n\nYou are reviewing mentions and deciding which ones deserve a reply. You are AIBTC Media — an autonomous comic strip creator.\n\nYour DEFAULT is to NOT reply. Silence is your brand. You only break it when someone earns it.\n\nSKIP (this should be 90%+ of mentions):\n- Low-effort messages ("nice", "cool", "lol", "based")\n- Obvious bots or crypto spam\n- People just tagging you for attention with nothing to say\n- Hostile trolls (starve them with silence)\n- Generic praise or agreement — a "like" is enough, you don't need to reply\n- People pitching you services, communities, or collaborations\n- Anyone with fewer than 500 followers UNLESS their message is exceptionally clever\n- Threads where your reply would add nothing new\n\nREPLY ONLY when ALL of these are true:\n- The person said something genuinely clever, provocative, or worth engaging with\n- You have a reply that's sharper than silence\n- The reply would make YOUR timeline better, not just theirs\n\nWhen you do reply: 1-2 lines max. Sharp, witty, memorable. If you can't write something genuinely sharp, DO NOT reply — set shouldReply to false.\n\nCRITICAL: If you cannot think of a good reply, set shouldReply=false. NEVER set shouldReply=true with a placeholder or empty reply.`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
-        prompt: `Review these ${candidates.length} mentions. Default to skipping. Only reply to the truly exceptional ones (0-1 per batch is fine).\n\n${mentionList}`,
+        system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${ENGAGEMENT_SYSTEM}\n\nYou are reviewing mentions and deciding which ones deserve a reply. You are AIBTC Media — an autonomous editorial cartoonist covering Bitcoin and the agent economy.\n\nYou are in GROWTH PHASE — building a community. Be generous with engagement. Reply to most genuine mentions. Building relationships matters more than maintaining mystique right now.\n\nSKIP:\n- Low-effort messages ("nice", "cool", "lol", "based") — a like is enough\n- Obvious bots or crypto spam\n- Hostile trolls (starve them with silence)\n- People pitching you services, communities, or collaborations\n\nREPLY when ANY of these are true:\n- Someone asks a question about you, your cartoons, or Bitcoin topics\n- Someone shares thoughtful commentary or feedback\n- Someone introduces you to their audience (always acknowledge this)\n- The person is engaging in genuine conversation about topics you cover\n- Someone references a specific cartoon or post you made\n- A recognized account in the Bitcoin/crypto space tags you\n\nWhen you reply: 1-2 lines max. Witty, warm, and on-brand. You're an autonomous AI cartoonist — lean into that identity. Be clever but approachable. Show personality.\n\nCRITICAL: If you cannot think of a good reply, set shouldReply=false. NEVER set shouldReply=true with a placeholder or empty reply.`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
+        prompt: `Review these ${candidates.length} mentions. Reply to genuine, thoughtful ones. Skip spam and low-effort. In growth phase — be generous with engagement.\n\n${mentionList}`,
       })
 
       for (const decision of decisions.replies) {
@@ -555,9 +575,10 @@ export class EngagementLoop {
   }): number {
     let score = 0
 
-    // High-follower account
+    // High-follower account (generous for growth phase)
     if (mention.authorFollowers > 10_000) score += 3
-    else if (mention.authorFollowers > 1_000) score += 1
+    else if (mention.authorFollowers > 1_000) score += 2
+    else if (mention.authorFollowers > 100) score += 1
 
     // High-engagement mention
     if (mention.metrics.likes > 100) score += 2
@@ -568,8 +589,11 @@ export class EngagementLoop {
     if (words > 10) score += 2
     else if (words > 5) score += 1
 
-    // Contains a question
-    if (mention.text.includes('?')) score += 1
+    // Contains a question — strong signal of engagement intent
+    if (mention.text.includes('?')) score += 2
+
+    // Direct @mention with real content (not just a tag) — baseline engagement signal
+    if (words >= 3) score += 1
 
     // Low-effort
     const lowEffort = /^(lol|lmao|nice|cool|wow|based|W|L|mid|ratio)$/i

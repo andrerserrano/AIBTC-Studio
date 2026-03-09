@@ -213,6 +213,7 @@ export class TwitterClient {
       authorId: string
       authorUsername: string
       authorFollowers: number
+      isReply: boolean
       metrics: { likes: number; retweets: number; replies: number }
     }>
   > {
@@ -229,13 +230,16 @@ export class TwitterClient {
         authorId: t.author.id,
         authorUsername: t.author.userName,
         authorFollowers: t.author.followers,
+        isReply: t.isReply,
         metrics: {
           likes: t.likeCount,
           retweets: t.retweetCount,
           replies: t.replyCount,
         },
       }))
-    } catch {
+    } catch (err) {
+      console.error('[twitter] getMentions failed:', (err as Error).message)
+      this.events.emit({ type: 'error', message: `getMentions failed: ${(err as Error).message}`, ts: Date.now() })
       return []
     }
   }
