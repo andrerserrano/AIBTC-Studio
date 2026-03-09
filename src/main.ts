@@ -199,11 +199,34 @@ async function main() {
     if (feedCache && Date.now() - feedCache.ts < FEED_CACHE_TTL) return feedCache.data
 
     const allPosts = (await stores.posts.read()) ?? []
+    const allCartoons = (await stores.cartoons.read()) ?? []
     const sorted = allPosts.filter(p => p.imageUrl).sort((a, b) => b.postedAt - a.postedAt)
 
     const data = await Promise.all(sorted.map(async p => {
       const imagePath = await resolveMediaUrl(p.imageUrl, 'images')
-      return imagePath ? {
+      if (!imagePath) return null
+
+      // Build provenance URL from inscription data
+      let provenanceUrl: string | null = null
+      if (p.provenance?.inscriptionId) {
+        provenanceUrl = `https://ordinals.com/inscription/${p.provenance.inscriptionId}`
+      }
+
+      // Use metadata from Post directly (new posts), or fall back to Cartoon lookup (old posts)
+      let sourceSignal = p.sourceSignal
+      let editorialReasoning = p.editorialReasoning
+      let sceneDescription = p.sceneDescription
+      let category = p.category
+
+      if (!sourceSignal && p.cartoonId) {
+        const cartoon = allCartoons.find(c => c.id === p.cartoonId)
+        if (cartoon?.concept) {
+          sceneDescription = sceneDescription ?? cartoon.concept.visual
+          editorialReasoning = editorialReasoning ?? cartoon.concept.reasoning
+        }
+      }
+
+      return {
         id: p.id,
         tweetId: p.tweetId,
         text: p.text,
@@ -211,7 +234,13 @@ async function main() {
         quotedTweetId: p.quotedTweetId,
         createdAt: p.postedAt,
         provenance: p.provenance ?? null,
-      } : null
+        provenanceUrl,
+        sourceSignal: sourceSignal ?? null,
+        editorialReasoning: editorialReasoning ?? null,
+        sceneDescription: sceneDescription ?? null,
+        category: category ?? null,
+        inscriptionId: p.provenance?.inscriptionId ?? null,
+      }
     }))
 
     const filtered = data.filter(Boolean)
