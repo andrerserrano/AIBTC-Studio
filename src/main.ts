@@ -215,13 +215,11 @@ async function main() {
       // Use metadata from Post directly (new posts), or fall back to Cartoon lookup (old posts)
       let sourceSignal = p.sourceSignal
       let editorialReasoning = p.editorialReasoning
-      let sceneDescription = p.sceneDescription
       let category = p.category
 
       if (!sourceSignal && p.cartoonId) {
         const cartoon = allCartoons.find(c => c.id === p.cartoonId)
         if (cartoon?.concept) {
-          sceneDescription = sceneDescription ?? cartoon.concept.visual
           editorialReasoning = editorialReasoning ?? cartoon.concept.reasoning
         }
       }
@@ -237,7 +235,6 @@ async function main() {
         provenanceUrl,
         sourceSignal: sourceSignal ?? null,
         editorialReasoning: editorialReasoning ?? null,
-        sceneDescription: sceneDescription ?? null,
         category: category ?? null,
         inscriptionId: p.provenance?.inscriptionId ?? null,
       }
@@ -246,6 +243,26 @@ async function main() {
     const filtered = data.filter(Boolean)
     feedCache = { data: filtered, ts: Date.now() }
     return filtered
+  })
+
+  // Admin: delete a post by ID (requires ADMIN_KEY env var)
+  app.delete('/api/feed/:postId', async (request, reply) => {
+    const adminKey = process.env.ADMIN_KEY
+    const auth = request.headers.authorization
+    if (!adminKey || auth !== `Bearer ${adminKey}`) {
+      reply.status(401)
+      return { error: 'Unauthorized' }
+    }
+    const { postId } = request.params as { postId: string }
+    const allPosts = (await stores.posts.read()) ?? []
+    const filtered = allPosts.filter(p => p.id !== postId)
+    if (filtered.length === allPosts.length) {
+      reply.status(404)
+      return { error: 'Post not found' }
+    }
+    await stores.posts.update(() => filtered, [])
+    feedCache = null  // bust cache
+    return { success: true, remaining: filtered.length }
   })
 
   app.get('/api/worldview', async () => worldview.getForFrontend())
