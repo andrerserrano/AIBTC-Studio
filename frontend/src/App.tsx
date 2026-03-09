@@ -53,7 +53,7 @@ export default function App() {
       <Header state={agentState} connected={connected} />
 
       {/* Two-panel editorial layout */}
-      <div className="flex-1 layout-grid grid grid-cols-[1fr_340px] min-h-0" style={{ maxWidth: 1280, margin: '0 auto', width: '100%' }}>
+      <div className="flex-1 layout-grid grid grid-cols-[1fr_380px] min-h-0" style={{ maxWidth: 1280, margin: '0 auto', width: '100%' }}>
         {/* Left: Feed — with mobile About button */}
         <main className="min-h-0 overflow-y-auto feed-main" style={{ borderRight: '1px solid var(--color-border)' }}>
           <Feed posts={posts} onAbout={() => setShowAbout(true)} />
