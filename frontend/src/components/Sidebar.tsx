@@ -151,34 +151,57 @@ export function Sidebar({ stats, postCount, consoleEntries }: SidebarProps) {
  * - Keeps only the most recent monologue/editor per burst
  * - Prioritizes high-signal events: shortlist, ideate, generate, critique, post, engage
  */
+/** Patterns that indicate a scan-related monologue (RSS feed results, source checks, etc.) */
+const SCAN_PATTERNS = [
+  /^Scanning .+ RSS/i,
+  /^Scanning .+ for Bitcoin/i,
+  /: no new articles/i,
+  /: using cached scan/i,
+  /: found \d+ new/i,
+  /^No new signals/i,
+  /^Signal buffer/i,
+  /^Checked \d+ sources/i,
+]
+
+function isScanMonologue(text: string): boolean {
+  return SCAN_PATTERNS.some(p => p.test(text))
+}
+
 function dedupeActivity(entries: ConsoleEntry[]): ConsoleEntry[] {
   const result: ConsoleEntry[] = []
-  let lastScanId: number | null = null
+  let lastScanIdx: number | null = null
   let scanCount = 0
+  let signalCount = 0
 
   for (const entry of entries) {
-    // Collapse consecutive scan entries — keep first, update text with count
-    if (entry.type === 'scan') {
-      if (lastScanId === null) {
-        // First scan in a run — add it
-        result.push({ ...entry })
-        lastScanId = result.length - 1
+    const isScanEntry = entry.type === 'scan' || (entry.type === 'monologue' && isScanMonologue(entry.text))
+
+    if (isScanEntry) {
+      // Extract signal count from text like "CoinDesk: using cached scan (2 signals)."
+      const sigMatch = entry.text.match(/(\d+)\s*signals?/i)
+      if (sigMatch) signalCount += parseInt(sigMatch[1], 10)
+
+      if (lastScanIdx === null) {
+        result.push({ ...entry, text: 'Scanning news feeds...' })
+        lastScanIdx = result.length - 1
         scanCount = 1
       } else {
-        // Subsequent scan — update the summary
         scanCount++
-        result[lastScanId] = {
-          ...result[lastScanId],
-          text: `Scanned ${scanCount} sources`,
-          ts: entry.ts, // use latest timestamp
+        result[lastScanIdx] = {
+          ...result[lastScanIdx],
+          text: signalCount > 0
+            ? `Scanned ${scanCount} feeds (${signalCount} signals)`
+            : `Scanned ${scanCount} feeds`,
+          ts: entry.ts,
         }
       }
       continue
     }
 
     // Non-scan entry breaks the scan streak
-    lastScanId = null
+    lastScanIdx = null
     scanCount = 0
+    signalCount = 0
 
     // Skip overly verbose monologue entries (keep short ones, they're more interesting)
     if (entry.type === 'monologue' && entry.text.length > 200) {
