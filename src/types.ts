@@ -202,4 +202,10 @@ export interface Post {
     lastChecked: number
   }
   provenance?: Provenance
+
+  // Metadata for frontend detail card
+  sourceSignal?: string
+  editorialReasoning?: string
+  sceneDescription?: string
+  category?: string
 }
