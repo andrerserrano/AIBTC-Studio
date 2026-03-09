@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { LocalPost } from '../types'
 import { TweetEmbed } from './TweetEmbed'
-import { sanitizeImagePath, sanitizeImageUrl, sanitizeVideoPath } from '../security'
+import { sanitizeImagePath, sanitizeVideoPath } from '../security'
 
 type ViewMode = 'feed' | 'gallery'
 
@@ -38,13 +38,6 @@ function VideoOverlay({ src, onClose }: { src: string; onClose: () => void }) {
       </div>
     </div>
   )
-}
-
-interface RejectedCartoon {
-  caption: string
-  imageUrl: string
-  reason: string
-  rejectedAt: number
 }
 
 /* ── Helpers ── */
