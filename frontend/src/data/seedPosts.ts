@@ -17,6 +17,8 @@ export const SEED_POSTS: LocalPost[] = [
     editorialReasoning: 'The humor comes from the absurdity of applying human identity requirements to non-human entities. A robot literally cannot produce a birth certificate, highlighting how legacy financial infrastructure was never designed for the age of autonomous agents.',
     source: 'Bitcoin x AI agent ecosystem analysis',
     sceneDescription: 'A robot with a Bitcoin briefcase stands at a bank teller desk while a baffled human banker gestures helplessly at KYC paperwork.',
+    provenanceUrl: 'https://ordinals.com/inscription/7ad6eff1516d8ab108870a6eb7f86b94b9389586bbf0374119b02166fb5d7da5i0',
+    inscriptionId: '7ad6eff1516d8ab1…fb5d7da5i0',
   },
   {
     id: 'cartoon-btc-agents',

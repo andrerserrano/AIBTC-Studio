@@ -62,11 +62,18 @@ function buildInscriptionScript(contentType: string, data: Uint8Array, pubKey: U
   }
 
   // Standard Ordinals inscription script:
-  //   <pubkey> OP_CHECKSIG OP_FALSE OP_IF OP_PUSH "ord" OP_1 OP_PUSH <ct> OP_0 OP_PUSH <data> OP_ENDIF
+  //   <pubkey> OP_CHECKSIG OP_FALSE OP_IF OP_PUSH "ord" OP_1 OP_PUSH <ct> OP_0
+  //       OP_PUSH <chunk1> OP_PUSH <chunk2> ... OP_PUSH <chunkN> OP_ENDIF
   //
   // The <pubkey> OP_CHECKSIG prefix makes the script spendable — the signer
   // proves ownership with a schnorr signature. The OP_FALSE OP_IF...OP_ENDIF
   // envelope is a no-op that carries the inscription data in the witness.
+  //
+  // Bitcoin consensus limits individual push data to 520 bytes (MAX_SCRIPT_ELEMENT_SIZE).
+  // For data larger than 520 bytes, we split it into multiple push operations.
+  // This is the standard approach used by `ord` and other inscription tools.
+  const MAX_CHUNK = 520
+
   const script = [
     ...pushData(pubKey),        // <pubkey> (x-only, 32 bytes)
     OP_CHECKSIG,                // spending condition
@@ -75,10 +82,16 @@ function buildInscriptionScript(contentType: string, data: Uint8Array, pubKey: U
     ...pushData(ordTag),        // "ord"
     OP_1,                       // tag: content-type
     ...pushData(ctBytes),       // <content-type> (properly length-prefixed)
-    OP_FALSE,                   // tag: body data
-    ...pushData(data),          // content
-    OP_ENDIF,
+    OP_FALSE,                   // tag: body data follows
   ]
+
+  // Push data in ≤520-byte chunks
+  for (let offset = 0; offset < data.length; offset += MAX_CHUNK) {
+    const chunk = data.slice(offset, Math.min(offset + MAX_CHUNK, data.length))
+    script.push(...pushData(chunk))
+  }
+
+  script.push(OP_ENDIF)
 
   return new Uint8Array(script)
 }
