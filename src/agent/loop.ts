@@ -396,16 +396,27 @@ export class AgentLoop {
 
     const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: composedPath })
 
+    // Derive metadata for the frontend detail card
+    const primarySignal = signals.find(s => topic.signals.includes(s.id))
+    const category = primarySignal?.aibtc?.beat
+      ?? primarySignal?.btcMag?.beat
+      ?? primarySignal?.rss?.beat
+      ?? ''
+
     const post: Post = {
       id: randomUUID(),
       tweetId,
       cartoonId: cartoon.id,
       text: caption,
-      imageUrl: toCdnUrl(variants[0], 'images'),
+      imageUrl: toCdnUrl(composedPath, 'images'),
       type: 'flagship',
       postedAt: Date.now(),
       engagement: { likes: 0, retweets: 0, replies: 0, views: 0, lastChecked: 0 },
       provenance,
+      sourceSignal: topic.summary,
+      editorialReasoning: best.reasoning,
+      sceneDescription: best.visual,
+      category: category.toUpperCase().replace(/-/g, ' '),
     }
 
     await this.stores.cartoons.update((c) => [...c, cartoon], [])
@@ -525,16 +536,27 @@ export class AgentLoop {
 
     const tweetId = await this.twitter.postCartoon({ text: caption, imagePath: composedPath })
 
+    // Derive metadata for the frontend detail card
+    const qhSignal = signals.find(s => topic.signals.includes(s.id))
+    const qhCategory = qhSignal?.aibtc?.beat
+      ?? qhSignal?.btcMag?.beat
+      ?? qhSignal?.rss?.beat
+      ?? ''
+
     const post: Post = {
       id: randomUUID(),
       tweetId,
       cartoonId: cartoon.id,
       text: caption,
-      imageUrl: toCdnUrl(variants[0], 'images'),
+      imageUrl: toCdnUrl(composedPath, 'images'),
       type: 'quickhit',
       postedAt: Date.now(),
       engagement: { likes: 0, retweets: 0, replies: 0, views: 0, lastChecked: 0 },
       provenance,
+      sourceSignal: topic.summary,
+      editorialReasoning: concept.reasoning,
+      sceneDescription: concept.visual,
+      category: qhCategory.toUpperCase().replace(/-/g, ' '),
     }
 
     await this.stores.cartoons.update((c) => [...c, cartoon], [])
