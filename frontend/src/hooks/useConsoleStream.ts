@@ -24,8 +24,9 @@ export function useConsoleStream(_options?: ConsoleStreamOptions) {
 
   const addEntry = useCallback((type: string, text: string, ts: number, tweetId?: string, imageUrl?: string) => {
     const id = idRef.current++
+    const safeText = text ?? ''
     setEntries(prev => {
-      const next = [...prev, { id, type, text, ts, tweetId, imageUrl }]
+      const next = [...prev, { id, type, text: safeText, ts, tweetId, imageUrl }]
       return next.length > 200 ? next.slice(-200) : next
     })
     setStats(prev => ({ ...prev, events: prev.events + 1 }))

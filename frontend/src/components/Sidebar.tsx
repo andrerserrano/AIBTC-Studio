@@ -133,7 +133,7 @@ export function Sidebar({ stats, postCount, consoleEntries }: SidebarProps) {
                     </span>
                   </div>
                   <p style={{ fontSize: 12, color: 'var(--color-ink-secondary)', lineHeight: 1.5 }}>
-                    {entry.text.length > 140 ? entry.text.slice(0, 140) + '...' : entry.text}
+                    {(entry.text ?? '').length > 140 ? entry.text.slice(0, 140) + '...' : entry.text ?? ''}
                   </p>
                 </div>
               )
