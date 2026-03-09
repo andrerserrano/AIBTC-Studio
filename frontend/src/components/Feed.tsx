@@ -179,18 +179,6 @@ function PostDetail({
             </div>
           )}
 
-          {/* SCENE DESCRIPTION */}
-          {post.sceneDescription && (
-            <div className="mt-5">
-              <p className="font-mono font-bold uppercase text-[11px] tracking-wider text-ink-faint" style={{ marginBottom: 4 }}>
-                Scene Description
-              </p>
-              <p className="font-sans text-[13px] text-ink-muted leading-relaxed">
-                {post.sceneDescription}
-              </p>
-            </div>
-          )}
-
           {/* ON-CHAIN PROVENANCE */}
           {post.provenanceUrl && (
             <div className="mt-6">
