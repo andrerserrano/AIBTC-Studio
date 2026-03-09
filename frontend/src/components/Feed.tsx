@@ -393,7 +393,7 @@ export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[
             )}
           </>
         ) : (
-        <div className="max-w-3xl space-y-6">
+        <div className="space-y-6">
           {posts.map((post, i) => (
             <article
               key={post.id}
