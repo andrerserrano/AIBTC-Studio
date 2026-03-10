@@ -16,7 +16,7 @@ function VideoOverlay({ src, onClose }: { src: string; onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/85 backdrop-blur-sm animate-[fade-in_0.15s_ease-out]"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/85 backdrop-blur-sm animate-[fade-in_0.15s_ease-out]"
       onClick={onClose}
     >
       <div className="relative max-w-4xl w-full" onClick={e => e.stopPropagation()}>
@@ -84,7 +84,7 @@ function PostDetail({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm animate-[fade-in_0.15s_ease-out]"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm animate-[fade-in_0.15s_ease-out]"
       onClick={onClose}
     >
       <div
