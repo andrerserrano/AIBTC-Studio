@@ -250,7 +250,7 @@ function PostDetail({
   )
 }
 
-export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[]; streamMode?: boolean; onAbout?: () => void }) {
+export function Feed({ posts, streamMode = false, onAbout, loading = false }: { posts: LocalPost[]; streamMode?: boolean; onAbout?: () => void; loading?: boolean }) {
   const [viewMode, setViewMode] = useState<ViewMode>('feed')
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [videoSrc, setVideoSrc] = useState<string | null>(null)
@@ -266,7 +266,7 @@ export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[
     }
   }, [streamMode])
 
-  if (posts.length === 0) {
+  if (loading || posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full bg-paper gap-6 px-8">
         <svg width="72" height="72" viewBox="0 0 72 72" fill="none" className="text-ink-faint animate-[float_3s_ease-in-out_infinite]">
@@ -275,7 +275,7 @@ export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[
           <circle cx="48" cy="22" r="4" stroke="currentColor" strokeWidth="1" opacity="0.25" />
         </svg>
         <div className="text-center max-w-xs">
-          <p className="font-editorial text-xl text-ink-light">No posts yet</p>
+          <p className="font-editorial text-xl text-ink-light">{loading ? 'Loading...' : 'No posts yet'}</p>
           <p className="font-sans text-[13px] text-ink-muted mt-2 leading-relaxed">
             AIBTC Media is scanning for something worth covering.
             <br />
