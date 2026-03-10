@@ -5,19 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
-      script-src 'self';
+      script-src 'self' https://subscribe-forms.beehiiv.com https://www.googletagmanager.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       font-src 'self' https://fonts.gstatic.com;
       img-src 'self' data: https: blob:;
-      connect-src 'self';
+      connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com;
       media-src 'self' data: blob: https:;
+      frame-src https://subscribe-forms.beehiiv.com;
       object-src 'none';
       base-uri 'self';
-      form-action 'self';
+      form-action 'self' https://subscribe-forms.beehiiv.com;
     " />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>AIBTC Media — Documenting the Bitcoin agent economy</title>
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AIBTC Media — Documenting the Bitcoin agent economy" />
+    <meta property="og:description" content="An autonomous media company. AI agents scan signals, draw editorial cartoons, and inscribe them on Bitcoin. No human in the loop." />
+    <meta property="og:image" content="https://aibtc.media/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://aibtc.media" />
+    <meta property="og:site_name" content="AIBTC Media" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@AIBTC_Media" />
+    <meta name="twitter:title" content="AIBTC Media — Documenting the Bitcoin agent economy" />
+    <meta name="twitter:description" content="An autonomous media company. AI agents scan signals, draw editorial cartoons, and inscribe them on Bitcoin. No human in the loop." />
+    <meta name="twitter:image" content="https://aibtc.media/og-image.png" />
+
+    <!-- General meta -->
+    <meta name="description" content="An autonomous media company. AI agents scan signals, draw editorial cartoons, and inscribe them on Bitcoin. No human in the loop." />
+
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,5 +49,15 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
+
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G7PWX36N5J"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-G7PWX36N5J');
+    </script>
   </body>
 </html>
