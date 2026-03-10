@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { LocalPost } from '../types'
 import { SEED_POSTS } from '../data/seedPosts'
 
 export function useFeed() {
   const [livePosts, setLivePosts] = useState<LocalPost[]>([])
+  const hasLoaded = useRef(false)
 
   useEffect(() => {
     async function load() {
@@ -11,8 +12,10 @@ export function useFeed() {
         const res = await fetch('/api/feed')
         const data: LocalPost[] = await res.json()
         setLivePosts(data)
+        hasLoaded.current = true
       } catch {
         // API unavailable (e.g. static deploy) — seed posts will still show
+        hasLoaded.current = true
       }
     }
 
@@ -21,7 +24,12 @@ export function useFeed() {
     return () => clearInterval(interval)
   }, [])
 
-  // Merge: live posts first, then seed posts that aren't already in the live feed
+  // Before the first API response, show seed posts only (avoids content flash)
+  if (!hasLoaded.current) {
+    return SEED_POSTS
+  }
+
+  // After first load: live posts first, then seed posts not already in the feed
   const liveIds = new Set(livePosts.map(p => p.id))
   const merged = [
     ...livePosts,
