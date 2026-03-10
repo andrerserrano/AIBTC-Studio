@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import type { LocalPost } from '../types'
 import { TweetEmbed } from './TweetEmbed'
 import { sanitizeImagePath, sanitizeVideoPath } from '../security'
@@ -381,7 +382,7 @@ export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[
             </div>
 
             {/* Lightbox */}
-            {lightboxIndex !== null && posts[lightboxIndex] && (
+            {lightboxIndex !== null && posts[lightboxIndex] && createPortal(
               <PostDetail
                 post={posts[lightboxIndex]}
                 postNumber={posts.length - lightboxIndex}
@@ -389,7 +390,8 @@ export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[
                 onClose={() => setLightboxIndex(null)}
                 onPrev={() => setLightboxIndex(Math.min(posts.length - 1, lightboxIndex + 1))}
                 onNext={() => setLightboxIndex(Math.max(0, lightboxIndex - 1))}
-              />
+              />,
+              document.body
             )}
           </>
         ) : (
@@ -474,8 +476,11 @@ export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[
         )}
       </div>
 
-      {videoSrc && <VideoOverlay src={videoSrc} onClose={() => setVideoSrc(null)} />}
-      {selectedPost && (
+      {videoSrc && createPortal(
+        <VideoOverlay src={videoSrc} onClose={() => setVideoSrc(null)} />,
+        document.body
+      )}
+      {selectedPost && createPortal(
         <PostDetail
           post={selectedPost.post}
           postNumber={selectedPost.number}
@@ -495,7 +500,8 @@ export function Feed({ posts, streamMode = false, onAbout }: { posts: LocalPost[
               setSelectedPost({ post: posts[nextIdx], number: posts.length - nextIdx })
             }
           }}
-        />
+        />,
+        document.body
       )}
     </div>
   )
