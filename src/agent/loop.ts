@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import type { Cartoon, CartoonConcept, ConceptCritique, Post, Signal, Topic } from '../types.js'
+import type { Cartoon, CartoonConcept, ConceptCritique, ContentHashProvenance, Post, Signal, Topic } from '../types.js'
 import { EventBus } from '../console/events.js'
 import { Scorer } from '../pipeline/scorer.js'
 
@@ -401,11 +401,13 @@ export class AgentLoop {
     // Compose the final framed cartoon (image + orange divider + caption)
     const composedPath = await this.composer.composeCartoon(variants[0], caption)
 
-    // Inscribe onto Bitcoin (non-blocking — failure won't prevent posting)
-    const provenance = await this.inscriber.inscribe(composedPath)
+    const cartoonId = randomUUID()
+
+    // Inscribe content hash onto Bitcoin (lightweight provenance, non-blocking)
+    const contentHashProvenance = await this.inscriber.inscribeHash(composedPath, cartoonId)
 
     const cartoon: Cartoon = {
-      id: randomUUID(),
+      id: cartoonId,
       conceptId: best.id,
       topicId: topic.id,
       type: 'flagship',
@@ -416,7 +418,7 @@ export class AgentLoop {
       critique,
       caption,
       createdAt: Date.now(),
-      provenance,
+      contentHashProvenance,
     }
 
     // Build tweet text that adds context to the image (the caption/punchline is
@@ -440,7 +442,7 @@ export class AgentLoop {
       type: 'flagship',
       postedAt: Date.now(),
       engagement: { likes: 0, retweets: 0, replies: 0, views: 0, lastChecked: 0 },
-      provenance,
+      contentHashProvenance,
       sourceSignal: topic.summary,
       editorialReasoning: best.reasoning,
       sceneDescription: best.visual,
@@ -541,11 +543,13 @@ export class AgentLoop {
     // Compose the final framed cartoon (image + orange divider + caption)
     const composedPath = await this.composer.composeCartoon(variants[0], caption)
 
-    // Inscribe onto Bitcoin (non-blocking — failure won't prevent posting)
-    const provenance = await this.inscriber.inscribe(composedPath)
+    const qhCartoonId = randomUUID()
+
+    // Inscribe content hash onto Bitcoin (lightweight provenance, non-blocking)
+    const contentHashProvenance = await this.inscriber.inscribeHash(composedPath, qhCartoonId)
 
     const cartoon: Cartoon = {
-      id: randomUUID(),
+      id: qhCartoonId,
       conceptId: concept.id,
       topicId: topic.id,
       type: 'quickhit',
@@ -559,7 +563,7 @@ export class AgentLoop {
       },
       caption,
       createdAt: Date.now(),
-      provenance,
+      contentHashProvenance,
     }
 
     // Build tweet text that adds context (caption/punchline is on the image)
@@ -582,7 +586,7 @@ export class AgentLoop {
       type: 'quickhit',
       postedAt: Date.now(),
       engagement: { likes: 0, retweets: 0, replies: 0, views: 0, lastChecked: 0 },
-      provenance,
+      contentHashProvenance,
       sourceSignal: topic.summary,
       editorialReasoning: concept.reasoning,
       sceneDescription: concept.visual,
