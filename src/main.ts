@@ -374,7 +374,7 @@ async function main() {
       <link>${escapeXml(tweetLink)}</link>
       <guid isPermaLink="false">${escapeXml(p.id)}</guid>
       <pubDate>${pubDate}</pubDate>
-      <description><![CDATA[${description}]]></description>${p.category ? `\n      <category>${escapeXml(p.category)}</category>` : ''}
+      <description><![CDATA[${description.replace(/]]>/g, ']]]]><![CDATA[>')}]]></description>${p.category ? `\n      <category>${escapeXml(p.category)}</category>` : ''}
       <media:content url="${escapeXml(imageAbsolute)}" type="image/png" medium="image"/>
       <media:thumbnail url="${escapeXml(imageAbsolute)}"/>
     </item>`)
@@ -520,3 +520,4 @@ main().catch((err) => {
   console.error('Fatal:', err)
   process.exit(1)
 })
+
