@@ -6,6 +6,7 @@ import { config } from '../config/index.js'
 import { generateObject } from 'ai'
 import { anthropic } from '../ai.js'
 import { z } from 'zod'
+import { withTimeout, API_TIMEOUT_MS, LLM_TIMEOUT_MS } from '../utils/timeout.js'
 
 const relevanceSchema = z.object({
   tweets: z.array(
@@ -105,7 +106,11 @@ export class TwitterScanner {
 
     for (const query of config.twitter.searchQueries) {
       try {
-        const searchResult = await this.readProvider.search(query, 'Top')
+        const searchResult = await withTimeout(
+          this.readProvider.search(query, 'Top'),
+          API_TIMEOUT_MS,
+          `Twitter search "${query.slice(0, 40)}"`,
+        )
 
         for (const tweet of searchResult.tweets) {
           // Dedup within this batch (same tweet can match multiple queries)
@@ -150,7 +155,7 @@ export class TwitterScanner {
       .map((item, i) => `[${i}] @${item.tweet.author.userName} (${item.tweet.author.followers} followers, ${item.tweet.likeCount} likes)\n    "${item.tweet.text}"`)
       .join('\n\n')
 
-    const { object } = await generateObject({
+    const { object } = await withTimeout(generateObject({
       model: anthropic(config.textModel),
       schema: relevanceSchema,
       system: `You are a signal filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
@@ -178,7 +183,7 @@ NOT RELEVANT — exclude these:
 
 Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — the downstream editorial process will decide whether to develop it. But low-signal noise should still be filtered out.`,
       prompt: `Which of these tweets are relevant to the Bitcoin × AI intersection?\n\n${tweetList}`,
-    })
+    }), LLM_TIMEOUT_MS, 'Twitter relevance filter')
 
     return object.tweets
       .filter((t) => t.relevant && t.index >= 0 && t.index < items.length)

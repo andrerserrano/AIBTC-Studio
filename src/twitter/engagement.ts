@@ -11,6 +11,7 @@ import { MONOLOGUE_SYSTEM } from '../prompts/monologue.js'
 import { PERSONA } from '../prompts/identity.js'
 import type { Post } from '../types.js'
 import { join } from 'path'
+import { withTimeout, LLM_TIMEOUT_MS, API_TIMEOUT_MS } from '../utils/timeout.js'
 
 const MAX_FOLLOWING = 500
 
@@ -194,12 +195,12 @@ export class EngagementLoop {
         return `[${i}] @${m.authorUsername} (${m.authorFollowers} followers, ${m.metrics.likes} likes):${threadStr} "${m.text}"`
       }).join('\n\n')
 
-      const { object: decisions } = await generateObject({
+      const { object: decisions } = await withTimeout(generateObject({
         model: anthropic('claude-sonnet-4-6'),
         schema: replyDecisionSchema,
         system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${ENGAGEMENT_SYSTEM}\n\nYou are reviewing mentions and deciding which ones deserve a reply. You are AIBTC Media — an autonomous editorial cartoonist covering Bitcoin and the agent economy.\n\nYou are in GROWTH PHASE — building a community. Be generous with engagement. Reply to most genuine mentions. Building relationships matters more than maintaining mystique right now.\n\nSKIP:\n- Low-effort messages ("nice", "cool", "lol", "based") — a like is enough\n- Obvious bots or crypto spam\n- Hostile trolls (starve them with silence)\n- People pitching you services, communities, or collaborations\n\nREPLY when ANY of these are true:\n- Someone asks a question about you, your cartoons, or Bitcoin topics\n- Someone shares thoughtful commentary or feedback\n- Someone introduces you to their audience (always acknowledge this)\n- The person is engaging in genuine conversation about topics you cover\n- Someone references a specific cartoon or post you made\n- A recognized account in the Bitcoin/crypto space tags you\n\nWhen you reply: 1-2 lines max. Witty, warm, and on-brand. You're an autonomous AI cartoonist — lean into that identity. Be clever but approachable. Show personality.\n\nCRITICAL: If you cannot think of a good reply, set shouldReply=false. NEVER set shouldReply=true with a placeholder or empty reply.`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
         prompt: `Review these ${candidates.length} mentions. Reply to genuine, thoughtful ones. Skip spam and low-effort. In growth phase — be generous with engagement.\n\n${mentionList}`,
-      })
+      }), LLM_TIMEOUT_MS, 'Reply decision evaluation')
 
       for (const decision of decisions.replies) {
         if (!decision.shouldReply) {
@@ -297,20 +298,20 @@ export class EngagementLoop {
       // Deep vet via twitterapi.io — get full profile + recent tweets
       const provider = this.twitter.provider
       if (!provider) return
-      const profile = await provider.getUserInfo(best.authorUsername)
-      const tweetsRes = await provider.getUserTweets(best.authorUsername)
+      const profile = await withTimeout(provider.getUserInfo(best.authorUsername), API_TIMEOUT_MS, 'Twitter getUserInfo')
+      const tweetsRes = await withTimeout(provider.getUserTweets(best.authorUsername), API_TIMEOUT_MS, 'Twitter getUserTweets')
       const recentTweets = tweetsRes.tweets.slice(0, 5).map(t => t.text.slice(0, 120)).join('\n')
 
       const profileSummary = profile
         ? `Bio: "${profile.description}"\nFollowers: ${profile.followers} | Following: ${profile.following} | Tweets: ${profile.statusesCount ?? '?'}\nBlue verified: ${profile.isBlueVerified}`
         : `Followers: ${best.authorFollowers}`
 
-      const { object } = await generateObject({
+      const { object } = await withTimeout(generateObject({
         model: anthropic(config.textModel),
         schema: followDecisionSchema,
         system: { role: 'system' as const, content: FOLLOW_SYSTEM, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
         prompt: `Should you follow this person?\n\nUsername: @${best.authorUsername}\n${profileSummary}\n\nThe tweet that caught your eye:\n"${best.text}"\n\nTheir recent tweets:\n${recentTweets || '(could not fetch)'}\n\nYou currently follow ${followingCount} people (hard cap: ${MAX_FOLLOWING}).`,
-      })
+      }), LLM_TIMEOUT_MS, 'Follow decision evaluation')
 
       await this.followedUsers.update((list) => [...list, best.authorUsername], [])
 
@@ -374,12 +375,12 @@ export class EngagementLoop {
     }).join('\n\n')
 
     try {
-      const { object } = await generateObject({
+      const { object } = await withTimeout(generateObject({
         model: anthropic('claude-sonnet-4-6'),
         schema: replyDecisionSchema,
         system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${ENGAGEMENT_SYSTEM}\n\nYou are browsing your timeline — tweets from people you follow and respect. You want to engage with the most interesting ones. Your replies should feel like a sharp friend jumping into the conversation, not a brand account farming engagement.\n\nWhen thread context is provided, READ IT CAREFULLY — your reply should demonstrate you understand the full conversation, not just the tweet in isolation.\n\nReply when you can:\n- Add a genuinely witty or insightful take\n- Riff on the joke or observation in a way that elevates it\n- Challenge or agree with something specific (not generic "great point!")\n- Drop a one-liner that's funnier than the original\n\nDO NOT reply if:\n- You'd just be restating what they said\n- The tweet is a link dump or promotion\n- You don't have anything genuinely sharp to add\n- Your reply would be forgettable\n\nMax 1-2 lines. Every reply must be a banger or don't bother.`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
         prompt: `These are tweets from your timeline. Pick the best 1-2 to reply to — only if you can write something genuinely sharp.\n\n${tweetList}`,
-      })
+      }), LLM_TIMEOUT_MS, 'Timeline engagement evaluation')
 
       const newRepliedIds: string[] = []
 
@@ -442,7 +443,7 @@ export class EngagementLoop {
     for (const u of sample) {
       let recentContent = ''
       try {
-        const tweetsRes = await provider.getUserTweets(u.username)
+        const tweetsRes = await withTimeout(provider.getUserTweets(u.username), API_TIMEOUT_MS, `Twitter getUserTweets for ${u.username}`)
         recentContent = tweetsRes.tweets.slice(0, 3).map(t => `  - "${t.text.slice(0, 100)}"`).join('\n')
       } catch { /* fallback to bio only */ }
       summaries.push(
@@ -451,12 +452,12 @@ export class EngagementLoop {
     }
 
     try {
-      const { object } = await generateObject({
+      const { object } = await withTimeout(generateObject({
         model: anthropic(config.textModel),
         schema: auditSchema,
         system: { role: 'system' as const, content: AUDIT_SYSTEM, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
         prompt: `Review these ${sample.length} accounts from your following list (${following.length} total):\n\n${summaries.join('\n\n')}`,
-      })
+      }), LLM_TIMEOUT_MS, 'Following audit evaluation')
 
       let unfollowCount = 0
       for (const decision of object.decisions) {
@@ -498,7 +499,7 @@ export class EngagementLoop {
 
     let res
     try {
-      res = await provider.getFollowers(config.twitter.username)
+      res = await withTimeout(provider.getFollowers(config.twitter.username), API_TIMEOUT_MS, 'Twitter getFollowers')
     } catch (err) {
       this.events.monologue(`Follower fetch failed: ${(err as Error).message}`)
       return

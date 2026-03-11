@@ -13,6 +13,7 @@ import { EventBus } from '../console/events.js'
 import { config } from '../config/index.js'
 import { STYLE_TEMPLATE, buildScenePrompt, stripTextFromVisual } from '../prompts/style.js'
 import type { TwitterReadProvider } from '../twitter/provider.js'
+import { withTimeout, LLM_TIMEOUT_MS, API_TIMEOUT_MS } from '../utils/timeout.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const SIGNATURE_PATH = join(__dirname, '..', 'assets', 'aibtc_studio_signature.png')
@@ -95,10 +96,10 @@ export class Generator {
           : (concept.referenceImageUrls ?? [])
 
         const messages = await this.buildMessages(panelPrompt, refImages)
-        const { files } = await generateText({
+        const { files } = await withTimeout(generateText({
           model: google(config.imageModel),
           messages,
-        })
+        }), LLM_TIMEOUT_MS, `Panel ${panel.index + 1} image generation`)
 
         if (files && files.length > 0) {
           const file = files[0]
@@ -179,10 +180,10 @@ export class Generator {
       try {
         const refImages = i === 0 ? await this.findReferenceImages(concept) : (concept.referenceImageUrls ?? [])
         const messages = await this.buildMessages(prompt, refImages)
-        const { files } = await generateText({
+        const { files } = await withTimeout(generateText({
           model: google(config.imageModel),
           messages,
-        })
+        }), LLM_TIMEOUT_MS, `Cartoon variant ${i + 1} image generation`)
 
         if (files && files.length > 0) {
           const file = files[0]
@@ -232,11 +233,11 @@ export class Generator {
     const urls: string[] = [...(concept.referenceImageUrls ?? [])]
 
     try {
-      const { object } = await generateObject({
+      const { object } = await withTimeout(generateObject({
         model: anthropic('claude-haiku-4-5-20251001'),
         schema: subjectExtractionSchema,
         prompt: `Extract named people, products, or companies from this cartoon concept that would benefit from a visual reference photo:\n\nVisual: ${concept.visual}\n\nOnly include specific, real, recognizable subjects (e.g. "Sam Altman", "iPhone", "Tesla Cybertruck"). Skip generic descriptions like "a businessman" or "a robot". For people, provide their Wikipedia article title (e.g. "Sam_Altman", "Tim_Cook").`,
-      })
+      }), LLM_TIMEOUT_MS, 'Reference image subject extraction')
 
       for (const subject of object.subjects) {
         if (this.refImageCache.has(subject.name)) {
@@ -274,7 +275,7 @@ export class Generator {
   private async fetchWikipediaImage(name: string): Promise<string | null> {
     const slug = name.replace(/\s+/g, '_')
     try {
-      const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(slug)}`)
+      const res = await withTimeout(fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(slug)}`), API_TIMEOUT_MS, `Wikipedia fetch for ${name}`)
       if (!res.ok) return null
       const data = await res.json() as {
         originalimage?: { source: string }

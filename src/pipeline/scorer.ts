@@ -9,6 +9,7 @@ import { config } from '../config/index.js'
 import { TOPIC_SCORING_SYSTEM } from '../prompts/scoring.js'
 import { SAFETY_CHECK_SYSTEM } from '../prompts/safety.js'
 import { MONOLOGUE_SYSTEM } from '../prompts/monologue.js'
+import { withTimeout, LLM_TIMEOUT_MS } from '../utils/timeout.js'
 
 const batchScoreSchema = z.object({
   topics: z.array(
@@ -72,12 +73,12 @@ export class Scorer {
       ? `\n\n===== DO NOT REPEAT — ALREADY COVERED =====\nThe following topics, angles, and jokes have ALREADY been drawn. You MUST NOT select any topic that overlaps with these. If a signal covers the same ground as anything below, score its worldview alignment as 0 and mark it as already covered.\n\n${recentTopicSummaries.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n\n===== END BLACKLIST =====`
       : ''
 
-    const { object } = await generateObject({
+    const { object } = await withTimeout(generateObject({
       model: anthropic(config.textModel),
       schema: batchScoreSchema,
       system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${TOPIC_SCORING_SYSTEM}\n\n${SAFETY_CHECK_SYSTEM}\n\nYou are evaluating a batch of signals. Group related signals into topics, then score each topic. Return at most 10 topics, ranked by cartoon potential. For each topic, list which signal indices it covers. Also perform a safety check inline — mark unsafe topics with safe=false.\n\nCRITICAL: Check every topic against the DO NOT REPEAT blacklist. If a topic covers the same subject, same angle, or same joke as anything on the blacklist — even if the phrasing is different — give it worldview alignment 0.`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
       prompt: `Score these signals for editorial cartoon potential:\n\n${signalList}${blacklist}`,
-    })
+    }), LLM_TIMEOUT_MS, 'Topic scoring and filtering')
 
     const topics: Topic[] = []
 

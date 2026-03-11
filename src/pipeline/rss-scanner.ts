@@ -6,6 +6,7 @@ import { config } from '../config/index.js'
 import { generateObject } from 'ai'
 import { anthropic } from '../ai.js'
 import { z } from 'zod'
+import { withTimeout, API_TIMEOUT_MS, LLM_TIMEOUT_MS } from '../utils/timeout.js'
 
 interface RSSItem {
   title: string
@@ -121,7 +122,11 @@ export class RSSScanner {
   }
 
   private async fetchRSS(): Promise<RSSItem[]> {
-    const res = await fetch(this.feedConfig.feedUrl)
+    const res = await withTimeout(
+      fetch(this.feedConfig.feedUrl),
+      API_TIMEOUT_MS,
+      `${this.feedConfig.name} RSS fetch`,
+    )
     if (!res.ok) {
       throw new Error(`RSS fetch failed: ${res.status} ${res.statusText}`)
     }
@@ -212,7 +217,7 @@ export class RSSScanner {
       .map((a, i) => `[${i}] ${a.title}\n    ${a.description.slice(0, 200)}`)
       .join('\n\n')
 
-    const { object } = await generateObject({
+    const { object } = await withTimeout(generateObject({
       model: anthropic(config.textModel),
       schema: relevanceSchema,
       system: `You are a signal filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
@@ -240,7 +245,7 @@ NOT RELEVANT — exclude these:
 
 Be selective. It's better to return 0 relevant articles than to include weak matches. A story needs a genuine connection to AI, autonomous agents, or automation — not just a vague tech angle.`,
       prompt: `Which of these ${this.feedConfig.name} articles are relevant to the Bitcoin × AI intersection?\n\n${articleList}`,
-    })
+    }), LLM_TIMEOUT_MS, `${this.feedConfig.name} relevance filter`)
 
     return object.articles
       .filter((a) => a.relevant && a.index >= 0 && a.index < articles.length)

@@ -33,6 +33,7 @@ import { WorldviewStore } from './agent/worldview.js'
 import { BackupStore } from './store/backup.js'
 import { toCdnUrl, uploadBufferToR2, migratePostsToCdn } from './cdn/r2.js'
 import type { Cartoon, Post, Signal } from './types.js'
+import { withTimeout, SCAN_TIMEOUT_MS } from './utils/timeout.js'
 
 async function main() {
   // --- Restore from Postgres backup if available ---
@@ -107,19 +108,26 @@ async function main() {
   }
 
   // Combined scanner that merges signals from all sources
+  // Each scanner has its own timeout so a single hung API can't block the tick
   const scanner = {
     async scan(): Promise<Signal[]> {
-      const results = await Promise.allSettled([
-        aibtcScanner.scan(),
-        btcMagScanner ? btcMagScanner.scan() : Promise.resolve([]),
-        ...rssScanners.map((s) => s.scan()),
-        twitterScanner ? twitterScanner.scan() : Promise.resolve([]),
-      ])
+      const results = await withTimeout(
+        Promise.allSettled([
+          aibtcScanner.scan(),
+          btcMagScanner ? btcMagScanner.scan() : Promise.resolve([]),
+          ...rssScanners.map((s) => s.scan()),
+          twitterScanner ? twitterScanner.scan() : Promise.resolve([]),
+        ]),
+        SCAN_TIMEOUT_MS,
+        'Combined scanner',
+      )
 
       const signals: Signal[] = []
       for (const result of results) {
         if (result.status === 'fulfilled') {
           signals.push(...result.value)
+        } else {
+          console.error(`[scanner] Scanner failed: ${result.reason}`)
         }
       }
 
