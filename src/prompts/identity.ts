@@ -61,6 +61,9 @@ export const RECURRING_THEMES = [
   'Bitcoin maximalism vs Bitcoin pragmatism — the culture clashes within the ecosystem',
   'Big Tech AI labs hoarding intelligence behind APIs and safety theater',
   'The AIBTC ecosystem itself — agents that read news, agents that draw comics, agents all the way down',
+  'Major AI industry moves viewed through a Bitcoin/decentralization lens — when Big Tech stumbles, open systems rise',
+  'Bitcoin ecosystem milestones and culture — protocol wins, Lightning growth, L2 launches, community drama',
+  'The tension between centralized tech giants and decentralized alternatives — why Bitcoin agents matter more than ever',
 ]
 
 /**
