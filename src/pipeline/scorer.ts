@@ -167,7 +167,7 @@ export class Scorer {
       const demoted: Topic[] = []
 
       for (const topic of topics) {
-        const allAibtc = topic.signals.every(sigId => {
+        const allAibtc = topic.signals.length > 0 && topic.signals.every(sigId => {
           const sig = capped.find(s => s.id === sigId)
           return sig?.source === 'aibtc'
         })

@@ -110,7 +110,7 @@ async function main() {
   // Cap AIBTC signals to prevent one prolific source from overwhelming the pool.
   // AIBTC.news fetches 5 beats in parallel, each returning up to 20 items — that's
   // up to 100 signals per scan. Cap to a sane default so other sources get a fair shake.
-  const aibtcSignalCap = Number(process.env.AIBTC_SIGNAL_CAP ?? 10)
+  const aibtcSignalCap = Number(process.env.AIBTC_SIGNAL_CAP ?? 10) || 10
 
   // Combined scanner that merges signals from all sources.
   // Each scanner is individually wrapped with SCAN_TIMEOUT_MS so a single
