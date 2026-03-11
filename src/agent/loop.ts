@@ -421,9 +421,9 @@ export class AgentLoop {
       contentHashProvenance,
     }
 
-    // Build tweet text that adds context to the image (the caption/punchline is
-    // already baked into the composed image, so the tweet should frame the story).
-    const tweetText = `${topic.summary.length > 220 ? topic.summary.slice(0, 220) + '…' : topic.summary}`
+    // Build tweet text: a short headline that frames the story. The caption/punchline
+    // is already baked into the composed image, so the tweet should set the stage.
+    const tweetText = `${topic.summary.length > 100 ? topic.summary.slice(0, 100) + '…' : topic.summary}`
     const tweetId = await this.twitter.postCartoon({ text: tweetText, imagePath: composedPath })
 
     // Derive metadata for the frontend detail card
@@ -566,8 +566,8 @@ export class AgentLoop {
       contentHashProvenance,
     }
 
-    // Build tweet text that adds context (caption/punchline is on the image)
-    const qhTweetText = `${topic.summary.length > 220 ? topic.summary.slice(0, 220) + '…' : topic.summary}`
+    // Build tweet text: short headline to frame the story (caption is on the image)
+    const qhTweetText = `${topic.summary.length > 100 ? topic.summary.slice(0, 100) + '…' : topic.summary}`
     const tweetId = await this.twitter.postCartoon({ text: qhTweetText, imagePath: composedPath })
 
     // Derive metadata for the frontend detail card
@@ -673,3 +673,4 @@ export class AgentLoop {
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
+

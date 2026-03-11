@@ -155,7 +155,7 @@ export class TwitterScanner {
       schema: relevanceSchema,
       system: `You are a signal filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
-Your job: identify which Twitter/X posts are relevant to the intersection of Bitcoin and AI/autonomous agents.
+Your job: identify which Twitter/X posts are worth covering. The core beat is Bitcoin × AI, but you also watch for major stories that can be told through that lens.
 
 RELEVANT — include these:
 - AI agents interacting with Bitcoin or crypto systems
@@ -166,16 +166,17 @@ RELEVANT — include these:
 - DeFi protocols incorporating AI agents or autonomous trading
 - Policy or regulation at the intersection of AI and Bitcoin/crypto
 - Significant announcements about AI × Bitcoin projects or launches
+- Major AI industry announcements that could be covered from a Bitcoin/decentralization angle (e.g., "Meta acquires AI company" → centralized vs. open AI; "OpenAI changes policy" → implications for autonomous agents)
+- Significant Bitcoin ecosystem developments worth commentary (e.g., Lightning milestones, protocol upgrades, L2 developments)
 
 NOT RELEVANT — exclude these:
 - Pure Bitcoin price discussion, market analysis, or price predictions
 - Generic crypto market commentary or memes
-- News stories already likely covered by traditional outlets (focus on original discussion)
 - Spam, shilling, or promotional threads without substance
-- General AI news without a Bitcoin/crypto connection
+- Mundane AI news with no possible Bitcoin/decentralization angle (e.g., minor ChatGPT UI updates, routine model releases without autonomy implications)
 - Mining, hash rate, or energy topics (unless AI-related)
 
-Be selective. It's better to return 0 relevant tweets than to include weak matches. A tweet needs a genuine connection to AI agents or autonomous systems in the Bitcoin/crypto ecosystem.`,
+Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — the downstream editorial process will decide whether to develop it. But low-signal noise should still be filtered out.`,
       prompt: `Which of these tweets are relevant to the Bitcoin × AI intersection?\n\n${tweetList}`,
     })
 

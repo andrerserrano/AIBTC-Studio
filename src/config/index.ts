@@ -21,7 +21,16 @@ export const config = {
     username: process.env.TWITTER_USERNAME ?? '',
     searchEnabled: process.env.TWITTER_SEARCH_ENABLED !== 'false',
     searchQueries: (process.env.TWITTER_SEARCH_QUERIES
-      ?? 'Bitcoin AI agents -is:retweet lang:en,BTC AI -is:retweet lang:en'
+      ?? [
+        // Tier 1: Core Bitcoin × AI intersection
+        'Bitcoin AI agents -is:retweet lang:en',
+        'BTC AI -is:retweet lang:en',
+        'AI agents crypto autonomous -is:retweet lang:en',
+        // Tier 2: Bitcoin ecosystem + autonomous systems
+        'Bitcoin autonomous systems -is:retweet lang:en',
+        'smart contracts AI -is:retweet lang:en',
+        'agent economy Bitcoin -is:retweet lang:en',
+      ].join(',')
     ).split(',').map(q => q.trim()).filter(Boolean),
     searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 50),
     searchMinFollowers: Number(process.env.TWITTER_SEARCH_MIN_FOLLOWERS ?? 100),
@@ -62,16 +71,16 @@ export const config = {
 
   // Agent loop
   tickIntervalMs: testMode ? 10_000 : 120_000,
-  flagshipIntervalMs: testMode ? 30_000 : 6 * 3600_000,     // 30s vs 6h (minimum cooldown between posts)
+  flagshipIntervalMs: testMode ? 30_000 : 2 * 3600_000,     // 30s vs 2h (minimum cooldown between posts)
   quickhitCooldownMs: testMode ? 15_000 : 3600_000,          // 15s vs 1h
 
   // Scheduled posting: target specific hours of the day (24h format)
   schedule: {
     enabled: !testMode,
-    postingHours: (process.env.POSTING_HOURS ?? '8,20').split(',').map(Number),  // 8am and 8pm
+    postingHours: (process.env.POSTING_HOURS ?? '8,10,12,14,17,20').split(',').map(Number),  // 6 posts spread across the day
     timezone: process.env.POSTING_TIMEZONE ?? 'America/New_York',
     windowMinutes: 30,   // Fire within ±30 min of target hour
-    minCooldownMs: testMode ? 30_000 : 4 * 3600_000,  // Minimum 4h between posts to prevent doubles
+    minCooldownMs: testMode ? 30_000 : 90 * 60_000,  // Minimum 1.5h between posts to prevent doubles
   },
 
   // Adaptive posting: starts fast, slows exponentially per post
@@ -139,3 +148,4 @@ export const config = {
 if (testMode) {
   console.log(`[TEST MODE] Fast timers: tick 10s, flagship 30s, quickhit 15s, 1 image variant | Model: ${config.textModel}`)
 }
+
