@@ -9,6 +9,7 @@ import { IDEATION_SYSTEM } from '../prompts/ideation.js'
 import { CRITIQUE_SYSTEM } from '../prompts/critique.js'
 import { MONOLOGUE_SYSTEM } from '../prompts/monologue.js'
 import type { WorldviewStore } from '../agent/worldview.js'
+import { withTimeout, LLM_TIMEOUT_MS } from '../utils/timeout.js'
 
 // --- Single-panel schemas (legacy) ---
 
@@ -134,7 +135,7 @@ export class Ideator {
       pastWorkContext = `\n\n===== YOUR PAST WORK (DO NOT repeat these angles) =====\n${recentPosts.map((p, i) => `${i + 1}. ${p.slice(0, 200)}`).join('\n')}\n===== END =====`
     }
 
-    const { object } = await generateObject({
+    const { object } = await withTimeout(generateObject({
       model: anthropic(config.textModel),
       schema: stripConceptSchema,
       system: {
@@ -143,7 +144,7 @@ export class Ideator {
         providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } },
       },
       prompt: `${themesPrompt}\n\nGenerate ${conceptCount} comic strip concepts for this topic:\n\n"${topic.summary}"\n\nContext: This topic scored ${topic.scores.composite.toFixed(1)} — strong on ${this.topDimension(topic)}.${pastWorkContext}`,
-    })
+    }), LLM_TIMEOUT_MS, 'Comic strip ideation')
 
     const concepts: StripConcept[] = object.strips.map((s) => {
       const layout: StripLayout = s.panelCount <= 3
@@ -203,7 +204,7 @@ export class Ideator {
       `${concepts.length} strip concepts on the table. Evaluating narrative flow...`,
     )
 
-    const { object } = await generateObject({
+    const { object } = await withTimeout(generateObject({
       model: anthropic(config.textModel),
       schema: stripCritiqueSchema,
       system: {
@@ -212,7 +213,7 @@ export class Ideator {
         providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } },
       },
       prompt: `Critique these comic strip concepts:\n\n${concepts.map((c, i) => `[${i}] "${c.headline}" (${c.panels.length} panels)\nArc: ${c.narrativeArc}\nCaption: "${c.caption}"\nJoke: ${c.jokeType}\nPanels:\n${c.panels.map((p, j) => `  Panel ${j + 1} (${p.narrativeRole}): ${p.visual.slice(0, 100)}...`).join('\n')}`).join('\n\n')}`,
-    })
+    }), LLM_TIMEOUT_MS, 'Comic strip critique')
 
     const scored = object.critiques.map((crit) => ({
       ...crit,
@@ -268,12 +269,12 @@ export class Ideator {
       pastWorkContext = `\n\n===== YOUR PAST WORK (for reference — DO NOT repeat these angles) =====\n${recentPosts.map((p, i) => `${i + 1}. ${p.slice(0, 200)}`).join('\n')}\n===== END PAST WORK =====\n\nYou can see your past work above. Use it to:\n- AVOID repeating the same joke angle, visual metaphor, or punchline structure\n- Find GENUINELY NEW angles on this topic that you haven't tried before\n- Make callbacks to past work IF natural (e.g. "building on my earlier piece about...")\n- But NEVER rehash the same gag with different words`
     }
 
-    const { object } = await generateObject({
+    const { object } = await withTimeout(generateObject({
       model: anthropic(config.textModel),
       schema: conceptsSchema,
       system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${IDEATION_SYSTEM}`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
       prompt: `${themesPrompt}\n\nGenerate ${conceptCount} cartoon concepts for this topic:\n\n"${topic.summary}"\n\nContext from signals: This topic scored ${topic.scores.composite.toFixed(1)} — strong on ${this.topDimension(topic)}. Find the visual gag.${pastWorkContext}`,
-    })
+    }), LLM_TIMEOUT_MS, 'Single-panel cartoon ideation')
 
     const concepts: CartoonConcept[] = object.concepts.map((c) => ({
       id: randomUUID(),
@@ -306,12 +307,12 @@ export class Ideator {
       `${concepts.length} concepts on the table. Let me be honest about which one actually works...`,
     )
 
-    const { object } = await generateObject({
+    const { object } = await withTimeout(generateObject({
       model: anthropic(config.textModel),
       schema: critiqueSchema,
       system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${CRITIQUE_SYSTEM}`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
       prompt: `Critique these cartoon concepts:\n\n${concepts.map((c, i) => `[${i}] Visual: ${c.visual}\nCaption: "${c.caption}"\nJoke type: ${c.jokeType}`).join('\n\n')}`,
-    })
+    }), LLM_TIMEOUT_MS, 'Cartoon concept critique')
 
     const scored = object.critiques.map((crit) => ({
       ...crit,

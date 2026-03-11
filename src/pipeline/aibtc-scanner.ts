@@ -3,6 +3,7 @@ import type { Signal } from '../types.js'
 import { Cache } from '../cache/cache.js'
 import { EventBus } from '../console/events.js'
 import { config } from '../config/index.js'
+import { withTimeout, API_TIMEOUT_MS } from '../utils/timeout.js'
 
 interface AIBTCSignal {
   id: string
@@ -95,7 +96,7 @@ export class AIBTCScanner {
       url.searchParams.set('limit', limit.toString())
       url.searchParams.set('since', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
 
-      const res = await fetch(url.toString())
+      const res = await withTimeout(fetch(url.toString()), API_TIMEOUT_MS, 'AIBTC latest fetch')
       if (!res.ok) {
         throw new Error(`${res.status} ${res.statusText}`)
       }
@@ -104,7 +105,7 @@ export class AIBTCScanner {
       const signals = this.convertSignals(json.signals)
 
       this.signalCache.set(cacheKey, signals, config.scan.newsTtlMs)
-      
+
       const newSignals = signals.filter(s => !this.seenIds.has(s.id))
       if (newSignals.length > 0) {
         const top = newSignals[0]
@@ -131,7 +132,7 @@ export class AIBTCScanner {
       url.searchParams.set('limit', limit.toString())
       url.searchParams.set('since', new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString())
 
-      const res = await fetch(url.toString())
+      const res = await withTimeout(fetch(url.toString()), API_TIMEOUT_MS, `AIBTC beat "${beatSlug}" fetch`)
       if (!res.ok) {
         throw new Error(`${res.status} ${res.statusText}`)
       }

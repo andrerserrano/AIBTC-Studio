@@ -33,6 +33,7 @@ import { WorldviewStore } from './agent/worldview.js'
 import { BackupStore } from './store/backup.js'
 import { toCdnUrl, uploadBufferToR2, migratePostsToCdn } from './cdn/r2.js'
 import type { Cartoon, Post, Signal } from './types.js'
+import { withTimeout, SCAN_TIMEOUT_MS } from './utils/timeout.js'
 
 async function main() {
   // --- Restore from Postgres backup if available ---
@@ -106,20 +107,35 @@ async function main() {
     console.log(`[scanners] Twitter search enabled with ${config.twitter.searchQueries.length} queries`)
   }
 
-  // Combined scanner that merges signals from all sources
+  // Combined scanner that merges signals from all sources.
+  // Each scanner is individually wrapped with SCAN_TIMEOUT_MS so a single
+  // hung scanner can't block the tick — and scanners that finish in time
+  // still contribute their signals even if another one times out.
   const scanner = {
     async scan(): Promise<Signal[]> {
       const results = await Promise.allSettled([
-        aibtcScanner.scan(),
-        btcMagScanner ? btcMagScanner.scan() : Promise.resolve([]),
-        ...rssScanners.map((s) => s.scan()),
-        twitterScanner ? twitterScanner.scan() : Promise.resolve([]),
+        withTimeout(aibtcScanner.scan(), SCAN_TIMEOUT_MS, 'AIBTC scanner'),
+        withTimeout(
+          btcMagScanner ? btcMagScanner.scan() : Promise.resolve([]),
+          SCAN_TIMEOUT_MS,
+          'BTC Mag scanner',
+        ),
+        ...rssScanners.map((s) =>
+          withTimeout(s.scan(), SCAN_TIMEOUT_MS, `${s.constructor.name} scanner`),
+        ),
+        withTimeout(
+          twitterScanner ? twitterScanner.scan() : Promise.resolve([]),
+          SCAN_TIMEOUT_MS,
+          'Twitter scanner',
+        ),
       ])
 
       const signals: Signal[] = []
       for (const result of results) {
         if (result.status === 'fulfilled') {
           signals.push(...result.value)
+        } else {
+          console.error(`[scanner] Scanner failed: ${result.reason}`)
         }
       }
 

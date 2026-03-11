@@ -5,6 +5,7 @@ import { readFile } from 'fs/promises'
 import type { CartoonConcept, Cartoon, Post } from '../types.js'
 import { EventBus } from '../console/events.js'
 import { PERSONA } from '../prompts/identity.js'
+import { withTimeout, LLM_TIMEOUT_MS } from '../utils/timeout.js'
 
 const editorSchema = z.object({
   approved: z.boolean(),
@@ -154,12 +155,12 @@ export class Editor {
 
     content.push({ type: 'text', text: textPrompt })
 
-    const { object } = await generateObject({
+    const { object } = await withTimeout(generateObject({
       model: anthropic('claude-sonnet-4-6'),
       schema: editorSchema,
       system: EDITOR_SYSTEM,
       messages: [{ role: 'user', content }],
-    })
+    }), LLM_TIMEOUT_MS, 'Editorial review')
 
     const finalCaption = object.captionApproved ? caption : (object.revisedCaption ?? caption)
 

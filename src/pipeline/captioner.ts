@@ -6,6 +6,7 @@ import { EventBus } from '../console/events.js'
 import { config } from '../config/index.js'
 import { CAPTION_SYSTEM } from '../prompts/caption.js'
 import { MONOLOGUE_SYSTEM } from '../prompts/monologue.js'
+import { withTimeout, LLM_TIMEOUT_MS } from '../utils/timeout.js'
 
 const captionsSchema = z.object({
   captions: z.array(
@@ -32,12 +33,12 @@ export class Captioner {
       pastCaptionsContext = `\n\n===== CAPTIONS ALREADY USED (DO NOT reuse these or write something too similar) =====\n${recentCaptions.map((c, i) => `${i + 1}. "${c}"`).join('\n')}\n===== END =====`
     }
 
-    const { object } = await generateObject({
+    const { object } = await withTimeout(generateObject({
       model: anthropic(config.textModel),
       schema: captionsSchema,
       system: { role: 'system' as const, content: `${MONOLOGUE_SYSTEM}\n\n${CAPTION_SYSTEM}`, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral', ttl: '1h' } } } },
       prompt: `Write 5 one-liner captions for this cartoon:\n\nTopic: ${concept.visual}\nOriginal concept caption: "${concept.caption}"\nJoke type: ${concept.jokeType}\n\nThe caption will accompany the cartoon image in a quote-tweet of the original news.${pastCaptionsContext}`,
-    })
+    }), LLM_TIMEOUT_MS, 'Caption generation')
 
     const best = object.captions[object.bestIndex]
 
