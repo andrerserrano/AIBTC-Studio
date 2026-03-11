@@ -219,9 +219,12 @@ async function main() {
       if (!imagePath) return null
 
       // Build provenance URL from inscription data
+      // Prefer full-image inscription, fall back to content hash inscription
       let provenanceUrl: string | null = null
       if (p.provenance?.inscriptionId) {
         provenanceUrl = `https://ordinals.com/inscription/${p.provenance.inscriptionId}`
+      } else if (p.contentHashProvenance?.inscriptionId) {
+        provenanceUrl = `https://ordinals.com/inscription/${p.contentHashProvenance.inscriptionId}`
       }
 
       // Use metadata from Post directly (new posts), or fall back to Cartoon lookup (old posts)
@@ -248,7 +251,8 @@ async function main() {
         sourceSignal: sourceSignal ?? null,
         editorialReasoning: editorialReasoning ?? null,
         category: category ?? null,
-        inscriptionId: p.provenance?.inscriptionId ?? null,
+        inscriptionId: p.provenance?.inscriptionId ?? p.contentHashProvenance?.inscriptionId ?? null,
+        contentHash: p.contentHashProvenance?.contentHash ?? null,
       }
     }))
 

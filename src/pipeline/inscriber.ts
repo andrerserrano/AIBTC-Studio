@@ -2,16 +2,27 @@
  * Pipeline stage: Inscriber
  *
  * Wraps the ordinals inscription engine for use inside the AIBTC-Media pipeline.
- * Inscription is NON-BLOCKING — if it fails or fees are too high, the cartoon
- * still gets posted. Provenance is simply undefined in that case.
+ * Supports two inscription modes:
+ *
+ *   1. Content Hash (default) — inscribes a small JSON payload with the SHA-256
+ *      hash of the canonical image. Cheap (~$0.50-1.00), provides on-chain
+ *      provenance immediately. Full images can be batch-inscribed later.
+ *
+ *   2. Full Image (legacy) — inscribes a compressed WebP thumbnail of the image.
+ *      More expensive but stores the actual image on-chain.
+ *
+ * Both modes are NON-BLOCKING — if inscription fails or fees are too high, the
+ * cartoon still gets posted. Provenance is simply undefined in that case.
  *
  * Security: Uses WalletProvider for all signing operations. In TEE mode
  * (EigenCloud EigenCompute), private keys never leave the enclave.
  */
 import { EventBus } from '../console/events.js'
 import { inscribeImage, type InscribeImageResult } from '../ordinals/index.js'
+import { inscribeContentHash, type InscribeHashResult } from '../ordinals/inscribe-hash.js'
 import { getOrdinalConfig } from '../ordinals/utils.js'
 import type { WalletProvider } from '../crypto/wallet-provider.js'
+import type { ContentHashProvenance } from '../types.js'
 
 export interface Provenance {
   inscriptionId: string
@@ -47,8 +58,55 @@ export class Inscriber {
   }
 
   /**
-   * Attempt to inscribe the composed cartoon image onto Bitcoin.
+   * Inscribe a content hash of the composed image onto Bitcoin.
+   * This is the lightweight, cost-effective provenance method.
+   *
+   * Returns ContentHashProvenance on success, undefined on failure/skip.
+   * This method NEVER throws — inscription failure should not prevent posting.
+   *
+   * @param composedImagePath - Path to the canonical composed image (the one uploaded to R2)
+   * @param cardId - The cartoon UUID for linking
+   */
+  async inscribeHash(composedImagePath: string, cardId: string): Promise<ContentHashProvenance | undefined> {
+    if (!this.enabled || !this.walletProvider) return undefined
+
+    try {
+      this.events.monologue('Inscribing content hash onto Bitcoin...')
+
+      const result = await inscribeContentHash(composedImagePath, {
+        cardId,
+        walletProvider: this.walletProvider,
+      })
+
+      if (!result) {
+        this.events.monologue('Hash inscription skipped (fees too high, duplicate, or disabled)')
+        return undefined
+      }
+
+      this.events.monologue(
+        `₿ Content hash inscribed! ${result.inscriptionId.slice(0, 12)}... ` +
+        `Hash: sha256:${result.contentHash.slice(0, 12)}... ` +
+        `Cost: ${result.costSat} sats (~$${result.costUSD}). ` +
+        `Reveal: ${result.explorerUrl}`
+      )
+
+      return result.contentHashProvenance
+
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      this.events.monologue(`Hash inscription failed (non-blocking): ${msg}`)
+      console.error('[inscriber] Hash inscription error:', err)
+      return undefined
+    }
+  }
+
+  /**
+   * Attempt to inscribe the composed cartoon image onto Bitcoin (full image).
    * Returns provenance data on success, undefined on failure/skip.
+   *
+   * This is the legacy full-image inscription method. Consider using
+   * inscribeHash() for cost-effective provenance, and batch-inscribing
+   * full images later.
    *
    * This method NEVER throws — inscription failure should not prevent posting.
    */

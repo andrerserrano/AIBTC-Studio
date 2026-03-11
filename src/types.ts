@@ -169,7 +169,7 @@ export interface ConceptCritique {
   critique: string
 }
 
-/** On-chain provenance from Bitcoin Ordinals inscription */
+/** On-chain provenance from Bitcoin Ordinals inscription (full image) */
 export interface Provenance {
   inscriptionId: string
   commitTxid: string
@@ -178,6 +178,29 @@ export interface Provenance {
   costUSD: number
   feeRate: number
   network: string
+}
+
+/**
+ * Lightweight on-chain provenance via content hash inscription.
+ * Inscribes a small JSON payload with the SHA-256 hash of the canonical image,
+ * enabling cheap provenance anchoring with optional full-image inscription later.
+ *
+ * The contentHash field serves as the matching key: when batch-inscribing full
+ * images later, recompute SHA-256 of the canonical image and match against this.
+ */
+export interface ContentHashProvenance {
+  /** SHA-256 hex digest of the canonical (full-res) composed image */
+  contentHash: string
+  /** Ordinals inscription ID for the hash payload (revealTxid + "i0") */
+  inscriptionId: string
+  commitTxid: string
+  revealTxid: string
+  costSat: number
+  costUSD: number
+  feeRate: number
+  network: string
+  /** ISO timestamp when the hash was inscribed */
+  inscribedAt: string
 }
 
 export interface Cartoon {
@@ -192,7 +215,10 @@ export interface Cartoon {
   critique: ConceptCritique
   caption: string
   createdAt: number
+  /** Full-image inscription provenance (optional — may be added later via batch) */
   provenance?: Provenance
+  /** Lightweight content hash inscription for immediate on-chain provenance */
+  contentHashProvenance?: ContentHashProvenance
 }
 
 export interface Post {
@@ -212,7 +238,10 @@ export interface Post {
     views: number
     lastChecked: number
   }
+  /** Full-image inscription provenance (optional — may be added later via batch) */
   provenance?: Provenance
+  /** Lightweight content hash inscription for immediate on-chain provenance */
+  contentHashProvenance?: ContentHashProvenance
 
   // Metadata for frontend detail card
   sourceSignal?: string
