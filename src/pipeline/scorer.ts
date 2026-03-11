@@ -110,12 +110,12 @@ export class Scorer {
       }
 
       const composite =
-        scored.virality * 0.15 +
+        scored.virality * 0.20 +
         scored.visualPotential * 0.15 +
         scored.audienceBreadth * 0.10 +
         scored.timeliness * 0.10 +
         scored.humor * 0.15 +
-        worldview * 0.35
+        worldview * 0.30
 
       const isDuplicate = recentTopicSummaries.some(
         (recent) => this.similarity(recent, scored.summary) > 0.3,
@@ -156,6 +156,34 @@ export class Scorer {
 
     // Sort by composite score descending
     topics.sort((a, b) => b.scores.composite - a.scores.composite)
+
+    // Source diversity enforcement: cap AIBTC-exclusive topics at 2 in the shortlist.
+    // Topics where ALL contributing signals come from aibtc.news get pushed to the
+    // back if more than 2 would otherwise dominate the top picks.
+    {
+      const MAX_AIBTC_EXCLUSIVE = 2
+      let aibtcExclusiveCount = 0
+      const promoted: Topic[] = []
+      const demoted: Topic[] = []
+
+      for (const topic of topics) {
+        const allAibtc = topic.signals.length > 0 && topic.signals.every(sigId => {
+          const sig = capped.find(s => s.id === sigId)
+          return sig?.source === 'aibtc'
+        })
+
+        if (allAibtc && aibtcExclusiveCount >= MAX_AIBTC_EXCLUSIVE) {
+          demoted.push(topic)
+        } else {
+          if (allAibtc) aibtcExclusiveCount++
+          promoted.push(topic)
+        }
+      }
+
+      // Reassemble: promoted first, then demoted (still available, just lower priority)
+      topics.length = 0
+      topics.push(...promoted, ...demoted)
+    }
 
     // Mark top 5 as shortlisted
     for (let i = 0; i < Math.min(5, topics.length); i++) {
