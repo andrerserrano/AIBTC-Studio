@@ -22,19 +22,27 @@ export const config = {
     searchEnabled: process.env.TWITTER_SEARCH_ENABLED !== 'false',
     searchQueries: (process.env.TWITTER_SEARCH_QUERIES
       ?? [
-        // Tier 1: Core Bitcoin × AI intersection
+        // Tier 1: Core Bitcoin × AI intersection (niche, low engagement OK)
         'Bitcoin AI agents -is:retweet lang:en',
         'BTC AI -is:retweet lang:en',
         'AI agents crypto autonomous -is:retweet lang:en',
-        // Tier 2: Bitcoin ecosystem + autonomous systems
         'Bitcoin autonomous systems -is:retweet lang:en',
         'smart contracts AI -is:retweet lang:en',
         'agent economy Bitcoin -is:retweet lang:en',
+        'Stacks Lightning AI -is:retweet lang:en',
+        'MCP Bitcoin blockchain -is:retweet lang:en',
+        // Tier 2: Broader AI + crypto conversations (cast a wider net, let LLM filter)
+        'AI agents -is:retweet lang:en',
+        '(Bitcoin OR BTC) AI -is:retweet lang:en',
+        '(OpenAI OR Anthropic OR "open source AI") -is:retweet lang:en',
+        'autonomous AI crypto -is:retweet lang:en',
+        'Bitcoin LLM -is:retweet lang:en',
+        'AI blockchain decentralized -is:retweet lang:en',
       ].join(',')
     ).split(',').map(q => q.trim()).filter(Boolean),
-    searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 50),
-    searchMinFollowers: Number(process.env.TWITTER_SEARCH_MIN_FOLLOWERS ?? 100),
-    searchMaxResults: Number(process.env.TWITTER_SEARCH_MAX_RESULTS ?? 30),
+    searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 10),
+    searchMinFollowers: Number(process.env.TWITTER_SEARCH_MIN_FOLLOWERS ?? 50),
+    searchMaxResults: Number(process.env.TWITTER_SEARCH_MAX_RESULTS ?? 60),
   },
 
   // AIBTC.news API
