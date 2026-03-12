@@ -52,7 +52,7 @@ export class TweetTextWriter {
         prompt: `Write 3 tweet text candidates for this cartoon:\n\nTopic: ${topicSummary}\nImage caption (punchline — DO NOT repeat this): "${caption}"${jokeType ? `\nJoke style: ${jokeType}` : ''}\n\nThe tweet text should SET UP the joke so the caption LANDS.`,
       }), LLM_TIMEOUT_MS, 'Tweet text generation')
 
-      const best = object.candidates[object.bestIndex]
+      const best = object.candidates[object.bestIndex] ?? object.candidates[0]
 
       this.events.monologue(
         `Tweet text candidates:\n${object.candidates.map((c, i) => `  ${i === object.bestIndex ? '→' : ' '} "${c.text}" (${c.tone})`).join('\n')}\n\nGoing with: "${best.text}". ${object.reasoning}`,
