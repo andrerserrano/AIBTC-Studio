@@ -290,6 +290,7 @@ async function main() {
         provenance: p.provenance ?? null,
         provenanceUrl,
         sourceSignal: sourceSignal ?? null,
+        sourceUrls: p.sourceUrls ?? [],
         editorialReasoning: editorialReasoning ?? null,
         category: category ?? null,
         inscriptionId: p.provenance?.inscriptionId ?? p.contentHashProvenance?.inscriptionId ?? null,
