@@ -245,6 +245,8 @@ export interface Post {
 
   // Metadata for frontend detail card
   sourceSignal?: string
+  /** Original source URLs (tweets, articles) that triggered this cartoon */
+  sourceUrls?: string[]
   editorialReasoning?: string
   sceneDescription?: string
   category?: string
