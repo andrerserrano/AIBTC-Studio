@@ -48,7 +48,7 @@ export const config = {
     ).split(',').map(q => q.trim()).filter(Boolean),
     searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 10),
     searchMinFollowers: Number(process.env.TWITTER_SEARCH_MIN_FOLLOWERS ?? 50),
-    searchMaxResults: Number(process.env.TWITTER_SEARCH_MAX_RESULTS ?? 120),
+    searchMaxResults: Number(process.env.TWITTER_SEARCH_MAX_RESULTS ?? 60),
   },
 
   // AIBTC.news API
