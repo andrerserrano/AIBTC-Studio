@@ -333,7 +333,7 @@ Be selective. Google News returns many articles — it's better to return 0 rele
     return title
       .toLowerCase()
       .replace(/\s*\(via\s+[^)]+\)\s*$/, '')   // Remove "(via Publisher)" suffix
-      .replace(/\s*[-–—|]\s*[^-–—|]+$/, '')  // Remove " - Publisher Name" suffix
+      .replace(/\s+[-–—|]\s+[^-–—|]+$/, '')  // Remove " - Publisher Name" suffix
       .replace(/[^a-z0-9\s]/g, '')
       .replace(/\s+/g, ' ')
       .trim()
