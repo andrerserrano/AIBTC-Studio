@@ -38,12 +38,12 @@ export const config = {
         'autonomous AI crypto -is:retweet lang:en',
         'Bitcoin LLM -is:retweet lang:en',
         'AI blockchain decentralized -is:retweet lang:en',
-        // Tier 3: Viral catch-all — broad Bitcoin × AI with high engagement floors
-        'Bitcoin AI min_faves:200 -is:retweet lang:en',
-        '"Bitcoin" "artificial intelligence" min_faves:100 -is:retweet lang:en',
-        '(BTC OR Bitcoin) (AI OR "machine learning" OR "autonomous") min_faves:500 -is:retweet lang:en',
+        // Tier 3: Broader keyword coverage (engagement filtered post-fetch by searchMinLikes)
         '"Bitcoin miners" AI -is:retweet lang:en',
-        '(Bitcoin OR BTC) (agents OR autonomous OR "agentic") min_faves:100 -is:retweet lang:en',
+        '(Bitcoin OR BTC) (agentic OR "machine learning") -is:retweet lang:en',
+        '"artificial intelligence" Bitcoin -is:retweet lang:en',
+        'Bitcoin "data center" AI -is:retweet lang:en',
+        'Bitcoin "autonomous agents" -is:retweet lang:en',
       ].join(',')
     ).split(',').map(q => q.trim()).filter(Boolean),
     searchMinLikes: Number(process.env.TWITTER_SEARCH_MIN_LIKES ?? 10),
