@@ -116,7 +116,9 @@ AIBTC provides a Bitcoin-native MCP server for AI agents. The toolkit for agents
 NEAR is building agent marketplaces. Virtuals hit $470M in agent commerce. Coinbase shipped agentic wallets. The agent economy is real and growing across every chain. We're here to make sure Bitcoin is part of that conversation.
 
 **20.**
-AI agents need three things to operate economically: a wallet, a way to transact, and no one who can shut them off. That's Bitcoin.
+AI agents need three things to operate economically: a wallet, a way to transact, and no one who can shut them off.
+
+That's Bitcoin.
 
 **21.**
 Every cycle, developers learn the hard way that building on someone else's platform means playing by someone else's rules. Agents will learn the same lesson faster. Bitcoin is the exit.

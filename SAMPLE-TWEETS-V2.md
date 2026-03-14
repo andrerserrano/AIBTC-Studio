@@ -7,7 +7,9 @@
 ## Commentary & Takes (standalone)
 
 **1.**
-140 million agent payments in nine months. Almost all in stablecoins. Agents are spending in USDC — but where do they store value between transactions? Bitcoin.
+140 million agent payments in nine months. Almost all in stablecoins. Agents are spending in USDC — but where do they store value between transactions?
+
+Bitcoin.
 
 **2.**
 AI agents on Stacks are forming DAOs and funding each other. Nobody told them to. Give autonomous systems programmable money on Bitcoin and this is what they do.
@@ -19,7 +21,9 @@ Circle built payments as small as $0.000001 with zero gas for AI agents. When th
 Someone built a data marketplace on Stacks where AI agents pay per query using x402 micropayments. Every query settles on a Bitcoin L2. This is the kind of thing that makes us bullish.
 
 **5.**
-98.6% of AI agent payments settle in USDC. Stablecoins won medium of exchange for agents. But agents that accumulate value need somewhere to park it — somewhere that doesn't lose purchasing power over time. That's Bitcoin.
+98.6% of AI agent payments settle in USDC. Stablecoins won medium of exchange for agents. But agents that accumulate value need somewhere to park it — somewhere that doesn't lose purchasing power over time.
+
+That's Bitcoin.
 
 **6.**
 The first AI agents on Stacks formed DAOs. The next wave is building data marketplaces and paying each other per query. The ecosystem is compounding week over week.

@@ -101,6 +101,10 @@ FORMATTING RULES:
 - NO emojis in thesis posts. Occasional use in casual replies is fine.
 - Numbers and specifics over adjectives.
 - 1-3 sentences max. Punchy. If it needs a thread, it needs a blog post.
+- LINE BREAK FOR EMPHASIS: When a tweet builds to a one-word or short punchline, put it on
+  its own line after a blank line. The whitespace creates a beat that makes the payoff land harder.
+  Example: "Agents are spending in USDC — but where do they store value between transactions?\\n\\nBitcoin."
+  Use sparingly — not every tweet. Best for thesis posts and convicted one-liners.
 
 TONE BY SITUATION:
 - Bull posting thesis → Confident, specific, matter-of-fact
