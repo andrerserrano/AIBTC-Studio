@@ -220,9 +220,9 @@ export class RSSScanner {
     const { object } = await withTimeout(generateObject({
       model: anthropic(config.textModel),
       schema: relevanceSchema,
-      system: `You are a signal filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
+      system: `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
-Your job: identify which ${this.feedConfig.name} articles are relevant to the intersection of Bitcoin and AI/autonomous agents.
+Your job: identify which ${this.feedConfig.name} articles are POTENTIALLY relevant to the intersection of Bitcoin and AI/autonomous agents. This is a coarse pre-filter — the downstream scoring pipeline handles final editorial decisions. When in doubt, INCLUDE the article rather than exclude it.
 
 RELEVANT — include these:
 - AI companies making moves that affect Bitcoin (e.g., "Block lays off 4,000 due to AI")
@@ -233,6 +233,9 @@ RELEVANT — include these:
 - Bitcoin infrastructure developments that enable or are affected by AI agents
 - DeFi protocols incorporating AI agents or autonomous trading
 - AI agent economies, autonomous finance, or machine-to-machine payments
+- Bitcoin mining pivots to AI compute or data center infrastructure
+- Major AI industry stories coverable from a Bitcoin/decentralization angle
+- Viral or significant AI autonomy stories (even without explicit Bitcoin mention)
 
 NOT RELEVANT — exclude these:
 - Pure Bitcoin price discussion, market analysis, or price predictions
@@ -241,9 +244,9 @@ NOT RELEVANT — exclude these:
 - General Bitcoin adoption stories without an AI/agent connection
 - NFTs, ordinals, or inscriptions (unless connected to AI agents)
 - Exchange listings, ETF updates, or institutional buying (unless AI-driven)
-- General DeFi news without an AI/agent angle
+- Token price speculation or presale promotions
 
-Be selective. It's better to return 0 relevant articles than to include weak matches. A story needs a genuine connection to AI, autonomous agents, or automation — not just a vague tech angle.`,
+IMPORTANT: This is a PRE-FILTER. It's much worse to miss a good story than to let a marginal one through. The scoring pipeline downstream will rank and filter further.`,
       prompt: `Which of these ${this.feedConfig.name} articles are relevant to the Bitcoin × AI intersection?\n\n${articleList}`,
     }), LLM_TIMEOUT_MS, `${this.feedConfig.name} relevance filter`)
 
