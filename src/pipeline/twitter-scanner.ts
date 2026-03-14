@@ -147,7 +147,7 @@ export class TwitterScanner {
   /** System prompt shared across all relevance-filter batches. */
   private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
-Your job: identify which Twitter/X posts are POTENTIALLY worth covering. This is a coarse pre-filter — the downstream scoring pipeline handles final editorial decisions. When in doubt, INCLUDE the post rather than exclude it.
+Your job: identify which Twitter/X posts are potentially worth covering. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
 
 RELEVANT — include these:
 - AI agents interacting with Bitcoin, crypto, or financial systems
@@ -160,9 +160,8 @@ RELEVANT — include these:
 - Significant announcements about AI × Bitcoin/crypto projects or launches
 - Major AI industry stories that could be covered from a Bitcoin/decentralization angle (e.g., "Meta acquires AI company" → centralized vs. open AI; "OpenAI changes policy" → implications for autonomous agents)
 - Viral AI stories about agent autonomy, AI replacing humans, or AI economic activity — even without explicit Bitcoin mention (e.g., "AI agents now hiring humans for tasks" is highly relevant to the agent economy beat)
-- Bitcoin mining operations pivoting to AI compute, data centers, GPU infrastructure
 - Significant Bitcoin ecosystem developments (Lightning milestones, protocol upgrades, L2 launches)
-- Major tech/AI announcements with broad implications for decentralization, open source AI, or autonomous systems
+- Major tech/AI announcements with broad implications for decentralization or autonomous systems
 
 NOT RELEVANT — exclude these:
 - Pure Bitcoin price discussion, market analysis, or price predictions
@@ -171,7 +170,7 @@ NOT RELEVANT — exclude these:
 - Mundane AI news with no possible Bitcoin/decentralization/autonomy angle (e.g., minor ChatGPT UI updates)
 - Token price speculation or "which crypto to buy" content
 
-IMPORTANT: This is a PRE-FILTER. It's much worse to miss a good story than to let a marginal one through. The scoring pipeline downstream will rank and filter further. If a post has ANY reasonable connection to AI agents, Bitcoin infrastructure, or the agent economy, include it.`
+Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — but low-signal noise should still be filtered out.`
 
   /** Max tweets per LLM call — keeps structured output reliable. */
   private static readonly BATCH_SIZE = 20

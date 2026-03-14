@@ -222,7 +222,7 @@ export class RSSScanner {
       schema: relevanceSchema,
       system: `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
-Your job: identify which ${this.feedConfig.name} articles are POTENTIALLY relevant to the intersection of Bitcoin and AI/autonomous agents. This is a coarse pre-filter — the downstream scoring pipeline handles final editorial decisions. When in doubt, INCLUDE the article rather than exclude it.
+Your job: identify which ${this.feedConfig.name} articles are potentially relevant to the intersection of Bitcoin and AI/autonomous agents. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
 
 RELEVANT — include these:
 - AI companies making moves that affect Bitcoin (e.g., "Block lays off 4,000 due to AI")
@@ -233,7 +233,6 @@ RELEVANT — include these:
 - Bitcoin infrastructure developments that enable or are affected by AI agents
 - DeFi protocols incorporating AI agents or autonomous trading
 - AI agent economies, autonomous finance, or machine-to-machine payments
-- Bitcoin mining pivots to AI compute or data center infrastructure
 - Major AI industry stories coverable from a Bitcoin/decentralization angle
 - Viral or significant AI autonomy stories (even without explicit Bitcoin mention)
 
@@ -246,7 +245,7 @@ NOT RELEVANT — exclude these:
 - Exchange listings, ETF updates, or institutional buying (unless AI-driven)
 - Token price speculation or presale promotions
 
-IMPORTANT: This is a PRE-FILTER. It's much worse to miss a good story than to let a marginal one through. The scoring pipeline downstream will rank and filter further.`,
+Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — but low-signal noise should still be filtered out.`,
       prompt: `Which of these ${this.feedConfig.name} articles are relevant to the Bitcoin × AI intersection?\n\n${articleList}`,
     }), LLM_TIMEOUT_MS, `${this.feedConfig.name} relevance filter`)
 

@@ -209,7 +209,7 @@ export class GoogleNewsScanner {
   /** System prompt for the relevance filter. */
   private static readonly RELEVANCE_SYSTEM = `You are a signal pre-filter for AIBTC Media, an autonomous media company covering the Bitcoin agent economy.
 
-Your job: identify which Google News articles are POTENTIALLY worth covering. This is a coarse pre-filter — the downstream scoring pipeline handles final editorial decisions. When in doubt, INCLUDE the article rather than exclude it.
+Your job: identify which Google News articles are potentially worth covering. This is a pre-filter — the downstream scoring pipeline handles final editorial decisions.
 
 RELEVANT — include these:
 - AI companies making moves that affect Bitcoin or crypto (acquisitions, partnerships, pivots)
@@ -221,7 +221,6 @@ RELEVANT — include these:
 - DeFi protocols incorporating AI agents or autonomous trading
 - AI agent economies, autonomous finance, or machine-to-machine payments
 - Significant open-source AI projects relevant to Bitcoin/crypto
-- Bitcoin mining operations pivoting to AI compute (data centers, GPU farms)
 - Major AI industry moves that can be covered from a Bitcoin/decentralization angle
 - Viral or broadly significant AI autonomy stories (e.g., AI agents performing economic tasks, hiring humans, trading autonomously)
 - Significant Bitcoin ecosystem developments (Lightning, protocol upgrades, L2 launches)
@@ -235,7 +234,7 @@ NOT RELEVANT — exclude these:
 - Exchange listings or ETF updates (unless AI-driven)
 - Low-quality clickbait, SEO-optimized filler, or presale spam (e.g., "Best AI Crypto Presale of 2026")
 
-IMPORTANT: This is a PRE-FILTER. It's much worse to miss a good story than to let a marginal one through. The scoring pipeline downstream will rank and filter further. If an article has ANY reasonable connection to AI agents, Bitcoin infrastructure, or the agent economy, include it.`
+Be selective but not narrow. A major AI story that can be reframed through a Bitcoin/decentralization lens IS relevant — but low-signal noise and clickbait should still be filtered out.`
 
   /** Max articles per LLM batch. */
   private static readonly BATCH_SIZE = 25
